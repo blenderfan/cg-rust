@@ -33,7 +33,7 @@ impl Sub for Vec2i {
 impl fmt::Display for Vec2i {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "({}, {})", self.data.extract::<0, 1>().as_array()[0], self.data.extract::<1, 1>().as_array()[0])
+        write!(f, "(X: {} | Y: {})", self.data.extract::<0, 1>().as_array()[0], self.data.extract::<1, 1>().as_array()[0])
     }
 }
 
@@ -76,7 +76,7 @@ impl Sub for Vec2l {
 impl fmt::Display for Vec2l {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "({}, {})", self.data.extract::<0, 1>().as_array()[0], self.data.extract::<1, 1>().as_array()[0])
+        write!(f, "(X: {} | Y: {})", self.data.extract::<0, 1>().as_array()[0], self.data.extract::<1, 1>().as_array()[0])
     }
 }
 
@@ -119,7 +119,7 @@ impl Sub for Vec2f {
 impl fmt::Display for Vec2f {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "({}, {})", self.data.extract::<0, 1>().as_array()[0], self.data.extract::<1, 1>().as_array()[0])
+        write!(f, "(X: {} | Y: {})", self.data.extract::<0, 1>().as_array()[0], self.data.extract::<1, 1>().as_array()[0])
     }
 }
 
@@ -161,7 +161,7 @@ impl Sub for Vec2d {
 impl fmt::Display for Vec2d {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "({}, {})", self.data.extract::<0, 1>().as_array()[0], self.data.extract::<1, 1>().as_array()[0])
+        write!(f, "(X: {} | Y: {})", self.data.extract::<0, 1>().as_array()[0], self.data.extract::<1, 1>().as_array()[0])
     }
 }
 
@@ -180,8 +180,39 @@ pub struct Vec3i {
 
 }
 
-impl Vec3i {
 
+impl Add for Vec3i {
+
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self { data: self.data + other.data }
+    }
+}
+
+impl Sub for Vec3i {
+
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Self { data:self.data - other.data}
+    }
+}
+
+impl fmt::Display for Vec3i {
+
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+
+        let extracted = self.data.extract::<0, 3>();
+        let arr = extracted.as_array();
+        write!(f, "(X: {} | Y: {} | Z: {})", arr[0], arr[1], arr[2])
+    }
+}
+
+impl Vec3i {
+    pub fn new(x : i32, y : i32, z: i32) -> Self {
+        Self { data: Simd::from_array([x, y, z, 0]) }
+    }
 }
 
 pub struct Vec3l {
@@ -190,8 +221,38 @@ pub struct Vec3l {
 
 }
 
-impl Vec3l {
+impl Add for Vec3l {
 
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self { data: self.data + other.data }
+    }
+}
+
+impl Sub for Vec3l {
+
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Self { data:self.data - other.data}
+    }
+}
+
+impl fmt::Display for Vec3l {
+
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+
+        let extracted = self.data.extract::<0, 3>();
+        let arr = extracted.as_array();
+        write!(f, "(X: {} | Y: {} | Z: {})", arr[0], arr[1], arr[2])
+    }
+}
+
+impl Vec3l {
+    pub fn new(x : i64, y : i64, z: i64) -> Self {
+        Self { data: Simd::from_array([x, y, z, 0]) }
+    }
 }
 
 
@@ -201,8 +262,38 @@ pub struct Vec3f {
 
 }
 
-impl Vec3f {
+impl Add for Vec3f {
 
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self { data: self.data + other.data }
+    }
+}
+
+impl Sub for Vec3f {
+
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Self { data:self.data - other.data}
+    }
+}
+
+impl fmt::Display for Vec3f {
+
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+
+        let extracted = self.data.extract::<0, 3>();
+        let arr = extracted.as_array();
+        write!(f, "(X: {} | Y: {} | Z: {})", arr[0], arr[1], arr[2])
+    }
+}
+
+impl Vec3f {
+    pub fn new(x : f32, y : f32, z: f32) -> Self {
+        Self { data: Simd::from_array([x, y, z, 0.0_f32]) }
+    }
 }
 
 
@@ -212,11 +303,40 @@ pub struct Vec3d {
 
 }
 
-impl Vec3d {
+impl Add for Vec3d {
 
+    type Output = Self;
 
-
+    fn add(self, other: Self) -> Self {
+        Self { data: self.data + other.data }
+    }
 }
+
+impl Sub for Vec3d {
+
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Self { data:self.data - other.data}
+    }
+}
+
+impl fmt::Display for Vec3d {
+
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+
+        let extracted = self.data.extract::<0, 3>();
+        let arr = extracted.as_array();
+        write!(f, "(X: {} | Y: {} | Z: {})", arr[0], arr[1], arr[2])
+    }
+}
+
+impl Vec3d {
+    pub fn new(x : f64, y : f64, z: f64) -> Self {
+        Self { data: Simd::from_array([x, y, z, 0.0_f64]) }
+    }
+}
+
 
 //TODO: Vector4
 //TODO: Template
