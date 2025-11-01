@@ -1,8 +1,14 @@
 
 
 use std::fmt;
+
 use std::ops::Add;
+use std::ops::AddAssign;
 use std::ops::Sub;
+use std::ops::SubAssign;
+use std::ops::Mul;
+use std::ops::MulAssign;
+
 use core::simd::prelude::*;
 
 
@@ -21,12 +27,42 @@ impl Add for Vec2i {
     }
 }
 
+impl AddAssign for Vec2i {
+
+    fn add_assign(&mut self, other: Self) {
+        self.data = self.data + other.data;
+    }
+}
+
 impl Sub for Vec2i {
 
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
         Self { data:self.data - other.data}
+    }
+}
+
+impl SubAssign for Vec2i {
+
+    fn sub_assign(&mut self, other: Self) {
+        self.data = self.data - other.data;
+    }
+}
+
+impl Mul for Vec2i {
+
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self {
+        Self { data: self.data * other.data }
+    }
+}
+
+impl MulAssign for Vec2i {
+
+    fn mul_assign(&mut self, other: Self) {
+        self.data = self.data * other.data;
     }
 }
 
@@ -42,7 +78,6 @@ impl Vec2i {
     pub fn new(x : i32, y : i32) -> Self {
         Self { data: Simd::from_array([x, y]) }
     }
-
 }
 
 
@@ -64,12 +99,42 @@ impl Add for Vec2l {
     }
 }
 
+impl AddAssign for Vec2l {
+
+    fn add_assign(&mut self, other: Self) {
+        self.data = self.data + other.data;
+    }
+}
+
 impl Sub for Vec2l {
 
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
         Self { data:self.data - other.data}
+    }
+}
+
+impl SubAssign for Vec2l {
+
+    fn sub_assign(&mut self, other: Self) {
+        self.data = self.data - other.data;
+    }
+}
+
+impl Mul for Vec2l {
+
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self {
+        Self { data: self.data * other.data }
+    }
+}
+
+impl MulAssign for Vec2l {
+
+    fn mul_assign(&mut self, other: Self) {
+        self.data = self.data * other.data;
     }
 }
 
@@ -107,12 +172,45 @@ impl Add for Vec2f {
     }
 }
 
+
+impl AddAssign for Vec2f {
+
+    fn add_assign(&mut self, other: Self) {
+        self.data = self.data + other.data;
+    }
+}
+
+
 impl Sub for Vec2f {
 
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
         Self { data:self.data - other.data}
+    }
+}
+
+
+impl SubAssign for Vec2f {
+
+    fn sub_assign(&mut self, other: Self) {
+        self.data = self.data - other.data;
+    }
+}
+
+impl Mul for Vec2f {
+
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self {
+        Self { data: self.data * other.data }
+    }
+}
+
+impl MulAssign for Vec2f {
+
+    fn mul_assign(&mut self, other: Self) {
+        self.data = self.data * other.data;
     }
 }
 
@@ -149,12 +247,42 @@ impl Add for Vec2d {
     }
 }
 
+impl AddAssign for Vec2d {
+
+    fn add_assign(&mut self, other: Self) {
+        self.data = self.data + other.data;
+    }
+}
+
 impl Sub for Vec2d {
 
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
         Self { data:self.data - other.data}
+    }
+}
+
+impl SubAssign for Vec2d {
+
+    fn sub_assign(&mut self, other: Self) {
+        self.data = self.data - other.data;
+    }
+}
+
+impl Mul for Vec2d {
+
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self {
+        Self { data: self.data * other.data }
+    }
+}
+
+impl MulAssign for Vec2d {
+
+    fn mul_assign(&mut self, other: Self) {
+        self.data = self.data * other.data;
     }
 }
 
@@ -190,12 +318,42 @@ impl Add for Vec3i {
     }
 }
 
+impl AddAssign for Vec3i {
+
+    fn add_assign(&mut self, other: Self) {
+        self.data = self.data + other.data;
+    }
+}
+
 impl Sub for Vec3i {
 
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
         Self { data:self.data - other.data}
+    }
+}
+
+impl SubAssign for Vec3i {
+
+    fn sub_assign(&mut self, other: Self) {
+        self.data = self.data - other.data;
+    }
+}
+
+impl Mul for Vec3i {
+
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self {
+        Self { data: self.data * other.data }
+    }
+}
+
+impl MulAssign for Vec3i {
+
+    fn mul_assign(&mut self, other: Self) {
+        self.data = self.data * other.data;
     }
 }
 
@@ -230,6 +388,13 @@ impl Add for Vec3l {
     }
 }
 
+impl AddAssign for Vec3l {
+
+    fn add_assign(&mut self, other: Self) {
+        self.data = self.data + other.data;
+    }
+}
+
 impl Sub for Vec3l {
 
     type Output = Self;
@@ -238,6 +403,31 @@ impl Sub for Vec3l {
         Self { data:self.data - other.data}
     }
 }
+
+impl SubAssign for Vec3l {
+
+    fn sub_assign(&mut self, other: Self) {
+        self.data = self.data - other.data;
+    }
+}
+
+
+impl Mul for Vec3l {
+
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self {
+        Self { data: self.data * other.data }
+    }
+}
+
+impl MulAssign for Vec3l {
+
+    fn mul_assign(&mut self, other: Self) {
+        self.data = self.data * other.data;
+    }
+}
+
 
 impl fmt::Display for Vec3l {
 
@@ -271,6 +461,13 @@ impl Add for Vec3f {
     }
 }
 
+impl AddAssign for Vec3f {
+
+    fn add_assign(&mut self, other: Self) {
+        self.data = self.data + other.data;
+    }
+}
+
 impl Sub for Vec3f {
 
     type Output = Self;
@@ -279,6 +476,30 @@ impl Sub for Vec3f {
         Self { data:self.data - other.data}
     }
 }
+
+impl SubAssign for Vec3f {
+
+    fn sub_assign(&mut self, other: Self) {
+        self.data = self.data - other.data;
+    }
+}
+
+impl Mul for Vec3f {
+
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self {
+        Self { data: self.data * other.data }
+    }
+}
+
+impl MulAssign for Vec3f {
+
+    fn mul_assign(&mut self, other: Self) {
+        self.data = self.data * other.data;
+    }
+}
+
 
 impl fmt::Display for Vec3f {
 
@@ -312,12 +533,43 @@ impl Add for Vec3d {
     }
 }
 
+impl AddAssign for Vec3d {
+
+    fn add_assign(&mut self, other: Self) {
+        self.data = self.data + other.data;
+    }
+}
+
 impl Sub for Vec3d {
 
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
         Self { data:self.data - other.data}
+    }
+}
+
+impl SubAssign for Vec3d {
+
+    fn sub_assign(&mut self, other: Self) {
+        self.data = self.data - other.data;
+    }
+}
+
+
+impl Mul for Vec3d {
+
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self {
+        Self { data: self.data * other.data }
+    }
+}
+
+impl MulAssign for Vec3d {
+
+    fn mul_assign(&mut self, other: Self) {
+        self.data = self.data * other.data;
     }
 }
 

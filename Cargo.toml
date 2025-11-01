@@ -3,4 +3,8 @@ name = "cg-rust"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+name = "cg_rust"
+crate-type = ["dylib"]
+
 [dependencies]
