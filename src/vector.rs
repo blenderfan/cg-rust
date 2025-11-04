@@ -11,6 +11,18 @@ use std::ops::MulAssign;
 
 use core::simd::prelude::*;
 
+pub trait Vector {
+
+}
+
+pub trait Vec2 : Vector {
+
+}
+
+pub trait Vec3 : Vector {
+
+}
+
 
 pub struct Vec2i {
 
@@ -80,7 +92,8 @@ impl Vec2i {
     }
 }
 
-
+impl Vector for Vec2i {}
+impl Vec2 for Vec2i {}
 
 
 
@@ -153,7 +166,8 @@ impl Vec2l {
     }
 }
 
-
+impl Vector for Vec2l {}
+impl Vec2 for Vec2l {}
 
 
 
@@ -227,7 +241,8 @@ impl Vec2f {
     }
 }
 
-
+impl Vector for Vec2f {}
+impl Vec2 for Vec2f {}
 
 
 
@@ -299,7 +314,8 @@ impl Vec2d {
     }
 }
 
-
+impl Vector for Vec2d {}
+impl Vec2 for Vec2d {}
 
 
 pub struct Vec3i {
@@ -373,6 +389,12 @@ impl Vec3i {
     }
 }
 
+impl Vector for Vec3i {}
+impl Vec3 for Vec3i {}
+
+
+
+
 pub struct Vec3l {
 
     data: i64x4
@@ -444,6 +466,10 @@ impl Vec3l {
         Self { data: Simd::from_array([x, y, z, 0]) }
     }
 }
+
+impl Vector for Vec3l {}
+impl Vec3 for Vec3l {}
+
 
 
 pub struct Vec3f {
@@ -517,6 +543,10 @@ impl Vec3f {
     }
 }
 
+impl Vector for Vec3f {}
+impl Vec3 for Vec3f {}
+
+
 
 pub struct Vec3d {
 
@@ -588,6 +618,12 @@ impl Vec3d {
         Self { data: Simd::from_array([x, y, z, 0.0_f64]) }
     }
 }
+
+
+impl Vector for Vec3d {}
+impl Vec3 for Vec3d {}
+
+
 
 
 //TODO: Vector4
