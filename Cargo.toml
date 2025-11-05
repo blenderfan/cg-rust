@@ -9,3 +9,11 @@ name = "cg_rust"
 crate-type = ["dylib"]
 
 [dependencies]
+
+[dev-dependencies]
+plotters = "0.3.7"
+
+
+[[example]]
+name = "plotter_polygon"
+path = "examples/plotters/ex_polygon.rs"

@@ -17,4 +17,8 @@ impl<T: Vec2> Polygon<T> {
         return &self.points;
     }
 
+    pub fn push(&mut self, point : T) {
+        self.points.push(point);
+    }
+
 }

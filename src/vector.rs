@@ -81,7 +81,7 @@ impl MulAssign for Vec2i {
 impl fmt::Display for Vec2i {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "(X: {} | Y: {})", self.data.extract::<0, 1>().as_array()[0], self.data.extract::<1, 1>().as_array()[0])
+        write!(f, "(X: {} | Y: {})", self.data.as_array()[0], self.data.as_array()[0])
     }
 }
 
@@ -90,6 +90,9 @@ impl Vec2i {
     pub fn new(x : i32, y : i32) -> Self {
         Self { data: Simd::from_array([x, y]) }
     }
+
+    pub fn x(&self) -> i32 { return self.data.as_array()[0]; }
+    pub fn y(&self) -> i32 { return self.data.as_array()[1]; }
 }
 
 impl Vector for Vec2i {}
@@ -154,7 +157,7 @@ impl MulAssign for Vec2l {
 impl fmt::Display for Vec2l {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "(X: {} | Y: {})", self.data.extract::<0, 1>().as_array()[0], self.data.extract::<1, 1>().as_array()[0])
+        write!(f, "(X: {} | Y: {})", self.data.as_array()[0], self.data.as_array()[0])
     }
 }
 
@@ -164,6 +167,9 @@ impl Vec2l {
     pub fn new(x : i64, y : i64) -> Self {
         Self { data: Simd::from_array([x, y]) }
     }
+
+    pub fn x(&self) -> i64 { return self.data.as_array()[0]; }
+    pub fn y(&self) -> i64 { return self.data.as_array()[1]; }
 }
 
 impl Vector for Vec2l {}
@@ -231,7 +237,7 @@ impl MulAssign for Vec2f {
 impl fmt::Display for Vec2f {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "(X: {} | Y: {})", self.data.extract::<0, 1>().as_array()[0], self.data.extract::<1, 1>().as_array()[0])
+        write!(f, "(X: {} | Y: {})", self.data.as_array()[0], self.data.as_array()[0])
     }
 }
 
@@ -239,6 +245,9 @@ impl Vec2f {
     pub fn new(x : f32, y : f32) -> Self {
         Self { data: Simd::from_array([x, y]) }
     }
+
+    pub fn x(&self) -> f32 { return self.data.as_array()[0]; }
+    pub fn y(&self) -> f32 { return self.data.as_array()[1]; }
 }
 
 impl Vector for Vec2f {}
@@ -304,7 +313,7 @@ impl MulAssign for Vec2d {
 impl fmt::Display for Vec2d {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "(X: {} | Y: {})", self.data.extract::<0, 1>().as_array()[0], self.data.extract::<1, 1>().as_array()[0])
+        write!(f, "(X: {} | Y: {})", self.data.as_array()[0], self.data.as_array()[1])
     }
 }
 
@@ -312,6 +321,9 @@ impl Vec2d {
     pub fn new(x : f64, y : f64) -> Self {
         Self { data: Simd::from_array([x, y]) }
     }
+
+    pub fn x(&self) -> f64 { return self.data.as_array()[0]; }
+    pub fn y(&self) -> f64 { return self.data.as_array()[1]; }
 }
 
 impl Vector for Vec2d {}
@@ -376,9 +388,7 @@ impl MulAssign for Vec3i {
 impl fmt::Display for Vec3i {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-
-        let extracted = self.data.extract::<0, 3>();
-        let arr = extracted.as_array();
+        let arr = self.data.as_array();
         write!(f, "(X: {} | Y: {} | Z: {})", arr[0], arr[1], arr[2])
     }
 }
@@ -387,6 +397,10 @@ impl Vec3i {
     pub fn new(x : i32, y : i32, z: i32) -> Self {
         Self { data: Simd::from_array([x, y, z, 0]) }
     }
+
+    pub fn x(&self) -> i32 { return self.data.as_array()[0]; }
+    pub fn y(&self) -> i32 { return self.data.as_array()[1]; }
+    pub fn z(&self) -> i32 { return self.data.as_array()[2]; }
 }
 
 impl Vector for Vec3i {}
@@ -454,9 +468,7 @@ impl MulAssign for Vec3l {
 impl fmt::Display for Vec3l {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-
-        let extracted = self.data.extract::<0, 3>();
-        let arr = extracted.as_array();
+        let arr = self.data.as_array();
         write!(f, "(X: {} | Y: {} | Z: {})", arr[0], arr[1], arr[2])
     }
 }
@@ -465,6 +477,10 @@ impl Vec3l {
     pub fn new(x : i64, y : i64, z: i64) -> Self {
         Self { data: Simd::from_array([x, y, z, 0]) }
     }
+
+    pub fn x(&self) -> i64 { return self.data.as_array()[0]; }
+    pub fn y(&self) -> i64 { return self.data.as_array()[1]; }
+    pub fn z(&self) -> i64 { return self.data.as_array()[2]; }
 }
 
 impl Vector for Vec3l {}
@@ -530,9 +546,7 @@ impl MulAssign for Vec3f {
 impl fmt::Display for Vec3f {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-
-        let extracted = self.data.extract::<0, 3>();
-        let arr = extracted.as_array();
+        let arr = self.data.as_array();
         write!(f, "(X: {} | Y: {} | Z: {})", arr[0], arr[1], arr[2])
     }
 }
@@ -541,6 +555,10 @@ impl Vec3f {
     pub fn new(x : f32, y : f32, z: f32) -> Self {
         Self { data: Simd::from_array([x, y, z, 0.0_f32]) }
     }
+
+    pub fn x(&self) -> f32 { return self.data.as_array()[0]; }
+    pub fn y(&self) -> f32 { return self.data.as_array()[1]; }
+    pub fn z(&self) -> f32 { return self.data.as_array()[2]; }
 }
 
 impl Vector for Vec3f {}
@@ -606,9 +624,7 @@ impl MulAssign for Vec3d {
 impl fmt::Display for Vec3d {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-
-        let extracted = self.data.extract::<0, 3>();
-        let arr = extracted.as_array();
+        let arr = self.data.as_array();
         write!(f, "(X: {} | Y: {} | Z: {})", arr[0], arr[1], arr[2])
     }
 }
@@ -617,6 +633,10 @@ impl Vec3d {
     pub fn new(x : f64, y : f64, z: f64) -> Self {
         Self { data: Simd::from_array([x, y, z, 0.0_f64]) }
     }
+
+    pub fn x(&self) -> f64 { return self.data.as_array()[0]; }
+    pub fn y(&self) -> f64 { return self.data.as_array()[1]; }
+    pub fn z(&self) -> f64 { return self.data.as_array()[2]; }
 }
 
 
