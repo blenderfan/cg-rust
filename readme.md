@@ -2,6 +2,8 @@
 ## Table of contents
 - [Introduction](#introduction)
 - [Overview](#overview)
+- [Dependencies](#dependencies)
+- [Examples](#examples)
 
 ## <a id="introduction"></a>Introduction
 
@@ -14,4 +16,24 @@ to keep myself motivated ^^
 
 ## <a id="overview"></a>Overview
 
-Right now, only a very basic SIMD Vector class is included.
+Right now, only a very basic SIMD Vector classes and rudimentary Polygons are included.
+
+## <a id="dependencies"></a>Dependencies
+
+To build the crate, nightly rust is necessary for using the following modules:
+
+> [SIMD](https://doc.rust-lang.org/std/simd/index.html)
+
+There are also dependencies for running the examples provided:
+
+> [Plotters](https://github.com/plotters-rs/plotters)
+
+## <a id="examples"></a>Examples
+
+![Plotter Polygon Example](https://github.com/blenderfan/cg-rust/blob/master/examples/plotters/plot-data/polygon.png)
+
+To run the examples in the crate that use plotters, use:
+
+`cargo run --example plotter_[example_name]`
+
+E.g. `cargo run --example plotter_polygon`

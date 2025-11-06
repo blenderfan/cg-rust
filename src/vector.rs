@@ -13,6 +13,8 @@ use core::simd::prelude::*;
 
 pub trait Vector {
 
+    type Element;
+
 }
 
 pub trait Vec2 : Vector {
@@ -23,7 +25,7 @@ pub trait Vec3 : Vector {
 
 }
 
-
+#[derive(Clone, Copy)]
 pub struct Vec2i {
 
     data : i32x2
@@ -78,6 +80,8 @@ impl MulAssign for Vec2i {
     }
 }
 
+
+
 impl fmt::Display for Vec2i {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -95,11 +99,14 @@ impl Vec2i {
     pub fn y(&self) -> i32 { return self.data.as_array()[1]; }
 }
 
-impl Vector for Vec2i {}
+impl Vector for Vec2i {
+     type Element = i32;
+}
 impl Vec2 for Vec2i {}
 
 
 
+#[derive(Clone, Copy)]
 pub struct Vec2l {
 
     data: i64x2
@@ -172,11 +179,14 @@ impl Vec2l {
     pub fn y(&self) -> i64 { return self.data.as_array()[1]; }
 }
 
-impl Vector for Vec2l {}
+impl Vector for Vec2l {
+     type Element = i64;
+}
 impl Vec2 for Vec2l {}
 
 
 
+#[derive(Clone, Copy)]
 pub struct Vec2f {
 
     data: f32x2
@@ -250,11 +260,13 @@ impl Vec2f {
     pub fn y(&self) -> f32 { return self.data.as_array()[1]; }
 }
 
-impl Vector for Vec2f {}
+impl Vector for Vec2f {
+     type Element = f32;
+}
 impl Vec2 for Vec2f {}
 
 
-
+#[derive(Clone, Copy)]
 pub struct Vec2d {
 
     data: f64x2
@@ -326,10 +338,14 @@ impl Vec2d {
     pub fn y(&self) -> f64 { return self.data.as_array()[1]; }
 }
 
-impl Vector for Vec2d {}
+impl Vector for Vec2d {
+     type Element = f64;
+}
 impl Vec2 for Vec2d {}
 
 
+
+#[derive(Clone, Copy)]
 pub struct Vec3i {
 
     data: i32x4
@@ -403,12 +419,14 @@ impl Vec3i {
     pub fn z(&self) -> i32 { return self.data.as_array()[2]; }
 }
 
-impl Vector for Vec3i {}
+impl Vector for Vec3i {
+     type Element = i32;
+}
 impl Vec3 for Vec3i {}
 
 
 
-
+#[derive(Clone, Copy)]
 pub struct Vec3l {
 
     data: i64x4
@@ -483,11 +501,15 @@ impl Vec3l {
     pub fn z(&self) -> i64 { return self.data.as_array()[2]; }
 }
 
-impl Vector for Vec3l {}
+impl Vector for Vec3l {
+     type Element = i64;
+}
 impl Vec3 for Vec3l {}
 
 
 
+
+#[derive(Clone, Copy)]
 pub struct Vec3f {
 
     data: f32x4
@@ -561,11 +583,14 @@ impl Vec3f {
     pub fn z(&self) -> f32 { return self.data.as_array()[2]; }
 }
 
-impl Vector for Vec3f {}
+impl Vector for Vec3f {
+     type Element = f32;
+}
 impl Vec3 for Vec3f {}
 
 
 
+#[derive(Clone, Copy)]
 pub struct Vec3d {
 
     data: f64x4
@@ -640,10 +665,10 @@ impl Vec3d {
 }
 
 
-impl Vector for Vec3d {}
+impl Vector for Vec3d {
+     type Element = f64;
+}
 impl Vec3 for Vec3d {}
-
-
 
 
 //TODO: Vector4
