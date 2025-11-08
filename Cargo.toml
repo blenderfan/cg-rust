@@ -3,6 +3,7 @@ name = "cg-rust"
 version = "0.1.1"
 authors = ["Mario Binder"]
 edition = "2024"
+license = "MIT"
 
 [lib]
 name = "cg_rust"
