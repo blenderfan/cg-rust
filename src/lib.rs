@@ -4,3 +4,6 @@
 pub mod traits;
 pub mod vector;
 pub mod polygon;
+
+pub mod mesh;
+pub mod triangle_vertex_mesh;

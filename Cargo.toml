@@ -1,6 +1,6 @@
 [package]
 name = "cg-rust"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Mario Binder"]
 edition = "2024"
 license = "MIT"
@@ -10,6 +10,7 @@ name = "cg_rust"
 crate-type = ["dylib"]
 
 [dependencies]
+num-traits = "0.2.19" 
 
 [dev-dependencies]
 plotters = "0.3.7"

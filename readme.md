@@ -24,7 +24,11 @@ To build the crate, nightly rust is necessary for using the following modules:
 
 > [SIMD](https://doc.rust-lang.org/std/simd/index.html)
 
-There are also dependencies for running the examples provided:
+Additionally, the following dependencies exist:
+
+> [num_traits](https://docs.rs/num-traits/latest/num_traits/index.html)
+
+There are additional dependencies for running the examples provided:
 
 > [Plotters](https://github.com/plotters-rs/plotters)
 
