@@ -14,14 +14,16 @@ pub trait Vector {
 
     type Element;
 
+    fn dot(self, other: Self) -> Self::Element;
+
 }
 
 pub trait Vec2 : Vector {
-
+    fn wedge(self, other:Self) -> Self::Element;
 }
 
 pub trait Vec3 : Vector {
-
+    fn wedge(self, other:Self) -> Self;
 }
 
 #[derive(Clone, Copy)]
@@ -108,8 +110,19 @@ impl Vec2i {
 
 impl Vector for Vec2i {
      type Element = i32;
+
+     fn dot(self, other: Self) -> Self::Element {
+         return self.x() * other.x() + self.y() * other.y(); 
+     }
+
+
 }
-impl Vec2 for Vec2i {}
+impl Vec2 for Vec2i {
+
+     fn wedge(self, other:Self) -> Self::Element {
+         return self.x() * other.y() - self.y() * other.x();
+     }
+}
 
 
 
@@ -196,8 +209,20 @@ impl Vec2l {
 
 impl Vector for Vec2l {
      type Element = i64;
+
+    fn dot(self, other: Self) -> Self::Element {
+         return self.x() * other.x() + self.y() * other.y(); 
+     }
+
+
 }
-impl Vec2 for Vec2l {}
+impl Vec2 for Vec2l {
+
+     fn wedge(self, other:Self) -> Self::Element {
+         return self.x() * other.y() - self.y() * other.x();
+     }
+
+}
 
 
 
@@ -285,8 +310,20 @@ impl Vec2f {
 
 impl Vector for Vec2f {
      type Element = f32;
+
+    fn dot(self, other: Self) -> Self::Element {
+         return self.x() * other.x() + self.y() * other.y(); 
+     }
+
+
 }
-impl Vec2 for Vec2f {}
+impl Vec2 for Vec2f {
+
+     fn wedge(self, other:Self) -> Self::Element {
+         return self.x() * other.y() - self.y() * other.x();
+     }
+
+}
 
 
 #[derive(Clone, Copy)]
@@ -372,8 +409,20 @@ impl Vec2d {
 
 impl Vector for Vec2d {
      type Element = f64;
+
+    fn dot(self, other: Self) -> Self::Element {
+         return self.x() * other.x() + self.y() * other.y(); 
+     }
+
+
 }
-impl Vec2 for Vec2d {}
+impl Vec2 for Vec2d {
+
+     fn wedge(self, other:Self) -> Self::Element {
+         return self.x() * other.y() - self.y() * other.x();
+     }
+
+}
 
 
 
@@ -461,8 +510,24 @@ impl Vec3i {
 
 impl Vector for Vec3i {
      type Element = i32;
+
+    fn dot(self, other: Self) -> Self::Element {
+         return self.x() * other.x() 
+            + self.y() * other.y()
+            + self.z() * other.z(); 
+     }
+
+
 }
-impl Vec3 for Vec3i {}
+impl Vec3 for Vec3i {
+
+     fn wedge(self, other:Self) -> Self {
+        return Vec3i::new(self.y() * other.z() - self.z() * other.y(),
+            self.x() * other.z() - self.z() * other.y(),
+            self.x() * other.y() - self.y() * other.x());
+     }
+
+}
 
 
 
@@ -551,8 +616,22 @@ impl Vec3l {
 
 impl Vector for Vec3l {
      type Element = i64;
+
+    fn dot(self, other: Self) -> Self::Element {
+         return self.x() * other.x() 
+            + self.y() * other.y()
+            + self.z() * other.z(); 
+     }
 }
-impl Vec3 for Vec3l {}
+impl Vec3 for Vec3l {
+
+     fn wedge(self, other:Self) -> Self {
+        return Vec3l::new(self.y() * other.z() - self.z() * other.y(),
+            self.x() * other.z() - self.z() * other.y(),
+            self.x() * other.y() - self.y() * other.x());
+     }
+
+}
 
 
 
@@ -641,8 +720,24 @@ impl Vec3f {
 
 impl Vector for Vec3f {
      type Element = f32;
+
+     
+    fn dot(self, other: Self) -> Self::Element {
+         return self.x() * other.x() 
+            + self.y() * other.y()
+            + self.z() * other.z(); 
+     }
 }
-impl Vec3 for Vec3f {}
+impl Vec3 for Vec3f {
+
+     fn wedge(self, other:Self) -> Self {
+        return Vec3f::new(self.y() * other.z() - self.z() * other.y(),
+            self.x() * other.z() - self.z() * other.y(),
+            self.x() * other.y() - self.y() * other.x());
+     }
+
+
+}
 
 
 
@@ -731,8 +826,22 @@ impl Vec3d {
 
 impl Vector for Vec3d {
      type Element = f64;
+
+    fn dot(self, other: Self) -> Self::Element {
+         return self.x() * other.x() 
+            + self.y() * other.y()
+            + self.z() * other.z(); 
+     }
 }
-impl Vec3 for Vec3d {}
+impl Vec3 for Vec3d {
+
+     fn wedge(self, other:Self) -> Self {
+        return Vec3d::new(self.y() * other.z() - self.z() * other.y(),
+            self.x() * other.z() - self.z() * other.y(),
+            self.x() * other.y() - self.y() * other.x());
+     }
+
+}
 
 
 //TODO: Vector4
