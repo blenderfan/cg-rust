@@ -20,7 +20,7 @@ pub trait PolygonFloat<T : Vec2, ElementType> {
     /// ```
     /// let poly = Polygon::Vec2d::regular(Vec2d::new(0.5, 0.5), 0.5, 6);
     /// ```
-    fn regular(center : T, radius : ElementType, corners : i32) -> Polygon<T>;
+    fn regular(center : T, radius : ElementType, corners : usize) -> Polygon<T>;
 }
 
 
@@ -35,6 +35,10 @@ impl<T: Vec2> Polygon<T> {
 
     pub fn new() -> Self {
         Self { points: Vec::<T>::new() }
+    }
+
+    pub fn with_capacity(capacity : usize) -> Self {
+        Self { points: Vec::<T>::with_capacity(capacity) }
     }
 
     pub fn get_points(&self) -> &Vec<T> {
@@ -61,25 +65,20 @@ impl<T: Vec2> Polygon<T> {
 impl<> PolygonFloat<Vec2d, f64> for Polygon<Vec2d> {
 
 
-    fn regular(center : Vec2d, radius : f64, corners : i32) -> Polygon<Vec2d> {
+    fn regular(center : Vec2d, radius : f64, corners : usize) -> Polygon<Vec2d> {
         
         let angle_per_corner = f64::consts::TAU / (corners as f64);
 
-        let mut poly = Polygon::<Vec2d>::new();
+        let mut poly = Polygon::<Vec2d>::with_capacity(corners);
 
-        let mut current_angle = 0_f64;
-        for _ in 0..corners {
+        for i in 0..corners {
+
+            let current_angle : f64 = angle_per_corner * i as f64;
 
             let x_y = current_angle.sin_cos();
-            let x = x_y.1 * 0.5_f64 * radius;
-            let y = x_y.0 * 0.5_f64 * radius;
+            let xy_vec = Vec2d::new(x_y.1, x_y.0) * 0.5_f64 * radius + center;
 
-            let mut p = Vec2d::new(x, y);
-            p += center;
-
-            poly.push(p);
-
-            current_angle += angle_per_corner;
+            poly.push(xy_vec);
         }
 
         return poly;

@@ -72,6 +72,14 @@ impl Mul for Vec2i {
     }
 }
 
+impl Mul<i32> for Vec2i {
+    type Output = Self;
+
+    fn mul(self, other: i32) -> Self {
+        Self { data: self.data * i32x2::splat(other) }
+    }
+}
+
 impl MulAssign for Vec2i {
 
     fn mul_assign(&mut self, other: Self) {
@@ -150,6 +158,14 @@ impl Mul for Vec2l {
 
     fn mul(self, other: Self) -> Self {
         Self { data: self.data * other.data }
+    }
+}
+
+impl Mul<i64> for Vec2l {
+    type Output = Self;
+
+    fn mul(self, other: i64) -> Self {
+        Self { data: self.data * i64x2::splat(other) }
     }
 }
 
@@ -236,6 +252,14 @@ impl Mul for Vec2f {
     }
 }
 
+impl Mul<f32> for Vec2f {
+    type Output = Self;
+
+    fn mul(self, other: f32) -> Self {
+        Self { data: self.data * f32x2::splat(other) }
+    }
+}
+
 impl MulAssign for Vec2f {
 
     fn mul_assign(&mut self, other: Self) {
@@ -311,6 +335,15 @@ impl Mul for Vec2d {
 
     fn mul(self, other: Self) -> Self {
         Self { data: self.data * other.data }
+    }
+}
+
+
+impl Mul<f64> for Vec2d {
+    type Output = Self;
+
+    fn mul(self, other: f64) -> Self {
+        Self { data: self.data * f64x2::splat(other) }
     }
 }
 
@@ -393,6 +426,14 @@ impl Mul for Vec3i {
     }
 }
 
+impl Mul<i32> for Vec3i {
+    type Output = Self;
+
+    fn mul(self, other: i32) -> Self {
+        Self { data: self.data * i32x4::splat(other) }
+    }
+}
+
 impl MulAssign for Vec3i {
 
     fn mul_assign(&mut self, other: Self) {
@@ -471,6 +512,14 @@ impl Mul for Vec3l {
 
     fn mul(self, other: Self) -> Self {
         Self { data: self.data * other.data }
+    }
+}
+
+impl Mul<i64> for Vec3l {
+    type Output = Self;
+
+    fn mul(self, other: i64) -> Self {
+        Self { data: self.data * i64x4::splat(other) }
     }
 }
 
@@ -556,6 +605,14 @@ impl Mul for Vec3f {
     }
 }
 
+impl Mul<f32> for Vec3f {
+    type Output = Self;
+
+    fn mul(self, other: f32) -> Self {
+        Self { data: self.data * f32x4::splat(other) }
+    }
+}
+
 impl MulAssign for Vec3f {
 
     fn mul_assign(&mut self, other: Self) {
@@ -635,6 +692,14 @@ impl Mul for Vec3d {
 
     fn mul(self, other: Self) -> Self {
         Self { data: self.data * other.data }
+    }
+}
+
+impl Mul<f64> for Vec3d {
+    type Output = Self;
+
+    fn mul(self, other: f64) -> Self {
+        Self { data: self.data * f64x4::splat(other) }
     }
 }
 
