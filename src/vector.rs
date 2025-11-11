@@ -1,5 +1,6 @@
 
 use std::fmt;
+use num_traits::Num;
 
 use std::ops::Add;
 use std::ops::AddAssign;
@@ -10,20 +11,27 @@ use std::ops::MulAssign;
 
 use core::simd::prelude::*;
 
-pub trait Vector {
 
-    type Element;
+pub trait Vector<T> : Sized 
+    + Add<Self, Output = Self>
+    + Sub<Self, Output = Self>
+    + AddAssign
+    + SubAssign 
+    + Copy
+    where T : Num + PartialOrd<T> {
 
-    fn dot(self, other: Self) -> Self::Element;
+    fn dot(a : Self, b: Self) -> T;
 
 }
 
-pub trait Vec2 : Vector {
-    fn wedge(self, other:Self) -> Self::Element;
+pub trait Vec2<T> : Vector<T>
+    where T : Num + PartialOrd<T> {
+    fn wedge(a : Self, b :Self) -> T;
 }
 
-pub trait Vec3 : Vector {
-    fn wedge(self, other:Self) -> Self;
+pub trait Vec3<T> : Vector<T> 
+    where T : Num + PartialOrd<T> {
+    fn wedge(a : Self, b :Self) -> Self;
 }
 
 #[derive(Clone, Copy)]
@@ -108,19 +116,18 @@ impl Vec2i {
     pub fn y(&self) -> i32 { return self.data.as_array()[1]; }
 }
 
-impl Vector for Vec2i {
-     type Element = i32;
+impl Vector<i32> for Vec2i {
 
-     fn dot(self, other: Self) -> Self::Element {
-         return self.x() * other.x() + self.y() * other.y(); 
+     fn dot(a : Self, b :Self) -> i32 {
+         return a.x() * b.x() + a.y() * b.y(); 
      }
 
 
 }
-impl Vec2 for Vec2i {
+impl Vec2<i32> for Vec2i {
 
-     fn wedge(self, other:Self) -> Self::Element {
-         return self.x() * other.y() - self.y() * other.x();
+     fn wedge(a : Self, b :Self) -> i32 {
+         return a.x() * b.y() - a.y() * b.x();
      }
 }
 
@@ -207,19 +214,18 @@ impl Vec2l {
     pub fn y(&self) -> i64 { return self.data.as_array()[1]; }
 }
 
-impl Vector for Vec2l {
-     type Element = i64;
+impl Vector<i64> for Vec2l {
 
-    fn dot(self, other: Self) -> Self::Element {
-         return self.x() * other.x() + self.y() * other.y(); 
+    fn dot(a : Self, b : Self) -> i64 {
+         return a.x() * b.x() + a.y() * b.y(); 
      }
 
 
 }
-impl Vec2 for Vec2l {
+impl Vec2<i64> for Vec2l {
 
-     fn wedge(self, other:Self) -> Self::Element {
-         return self.x() * other.y() - self.y() * other.x();
+     fn wedge(a : Self, b : Self) -> i64 {
+         return a.x() * b.y() - a.y() * b.x();
      }
 
 }
@@ -308,19 +314,18 @@ impl Vec2f {
     pub fn y(&self) -> f32 { return self.data.as_array()[1]; }
 }
 
-impl Vector for Vec2f {
-     type Element = f32;
+impl Vector<f32> for Vec2f {
 
-    fn dot(self, other: Self) -> Self::Element {
-         return self.x() * other.x() + self.y() * other.y(); 
+    fn dot(a : Self, b : Self) -> f32 {
+         return a.x() * b.x() + a.y() * b.y(); 
      }
 
 
 }
-impl Vec2 for Vec2f {
+impl Vec2<f32> for Vec2f {
 
-     fn wedge(self, other:Self) -> Self::Element {
-         return self.x() * other.y() - self.y() * other.x();
+     fn wedge(a : Self, b : Self) -> f32 {
+         return a.x() * b.y() - a.y() * b.x();
      }
 
 }
@@ -407,21 +412,19 @@ impl Vec2d {
     pub fn y(&self) -> f64 { return self.data.as_array()[1]; }
 }
 
-impl Vector for Vec2d {
-     type Element = f64;
+impl Vector<f64> for Vec2d {
 
-    fn dot(self, other: Self) -> Self::Element {
-         return self.x() * other.x() + self.y() * other.y(); 
+    fn dot(a : Self, b : Self) -> f64 {
+         return a.x() * b.x() + a.y() * b.y(); 
      }
 
 
 }
-impl Vec2 for Vec2d {
+impl Vec2<f64> for Vec2d {
 
-     fn wedge(self, other:Self) -> Self::Element {
-         return self.x() * other.y() - self.y() * other.x();
+     fn wedge(a : Self, b : Self) -> f64 {
+         return a.x() * b.y() - a.y() * b.x();
      }
-
 }
 
 
@@ -508,23 +511,19 @@ impl Vec3i {
     pub fn z(&self) -> i32 { return self.data.as_array()[2]; }
 }
 
-impl Vector for Vec3i {
-     type Element = i32;
+impl Vector<i32> for Vec3i {
 
-    fn dot(self, other: Self) -> Self::Element {
-         return self.x() * other.x() 
-            + self.y() * other.y()
-            + self.z() * other.z(); 
-     }
-
-
+    fn dot(a : Self, b : Self) -> i32 {
+         return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
+    }
 }
-impl Vec3 for Vec3i {
 
-     fn wedge(self, other:Self) -> Self {
-        return Vec3i::new(self.y() * other.z() - self.z() * other.y(),
-            self.x() * other.z() - self.z() * other.y(),
-            self.x() * other.y() - self.y() * other.x());
+impl Vec3<i32> for Vec3i {
+
+     fn wedge(a : Self, b : Self) -> Self {
+        return Vec3i::new(a.y() * b.z() - a.z() * b.y(),
+            a.x() * b.z() - a.z() * b.y(),
+            a.x() * b.y() - a.y() * b.x());
      }
 
 }
@@ -614,21 +613,19 @@ impl Vec3l {
     pub fn z(&self) -> i64 { return self.data.as_array()[2]; }
 }
 
-impl Vector for Vec3l {
-     type Element = i64;
+impl Vector<i64> for Vec3l {
 
-    fn dot(self, other: Self) -> Self::Element {
-         return self.x() * other.x() 
-            + self.y() * other.y()
-            + self.z() * other.z(); 
-     }
+    fn dot(a : Self, b : Self) -> i64 {
+         return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
+    }
 }
-impl Vec3 for Vec3l {
 
-     fn wedge(self, other:Self) -> Self {
-        return Vec3l::new(self.y() * other.z() - self.z() * other.y(),
-            self.x() * other.z() - self.z() * other.y(),
-            self.x() * other.y() - self.y() * other.x());
+impl Vec3<i64> for Vec3l {
+
+     fn wedge(a : Self, b : Self) -> Self {
+        return Vec3l::new(a.y() * b.z() - a.z() * b.y(),
+            a.x() * b.z() - a.z() * b.y(),
+            a.x() * b.y() - a.y() * b.x());
      }
 
 }
@@ -718,24 +715,21 @@ impl Vec3f {
     pub fn z(&self) -> f32 { return self.data.as_array()[2]; }
 }
 
-impl Vector for Vec3f {
-     type Element = f32;
+impl Vector<f32> for Vec3f {
 
-     
-    fn dot(self, other: Self) -> Self::Element {
-         return self.x() * other.x() 
-            + self.y() * other.y()
-            + self.z() * other.z(); 
-     }
+    fn dot(a : Self, b : Self) -> f32 {
+         return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
+    }
 }
-impl Vec3 for Vec3f {
 
-     fn wedge(self, other:Self) -> Self {
-        return Vec3f::new(self.y() * other.z() - self.z() * other.y(),
-            self.x() * other.z() - self.z() * other.y(),
-            self.x() * other.y() - self.y() * other.x());
+impl Vec3<f32> for Vec3f {
+
+
+     fn wedge(a : Self, b : Self) -> Self {
+        return Vec3f::new(a.y() * b.z() - a.z() * b.y(),
+            a.x() * b.z() - a.z() * b.y(),
+            a.x() * b.y() - a.y() * b.x());
      }
-
 
 }
 
@@ -824,21 +818,19 @@ impl Vec3d {
 }
 
 
-impl Vector for Vec3d {
-     type Element = f64;
+impl Vector<f64> for Vec3d {
 
-    fn dot(self, other: Self) -> Self::Element {
-         return self.x() * other.x() 
-            + self.y() * other.y()
-            + self.z() * other.z(); 
-     }
+    fn dot(a : Self, b : Self) -> f64 {
+         return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
+    }
 }
-impl Vec3 for Vec3d {
 
-     fn wedge(self, other:Self) -> Self {
-        return Vec3d::new(self.y() * other.z() - self.z() * other.y(),
-            self.x() * other.z() - self.z() * other.y(),
-            self.x() * other.y() - self.y() * other.x());
+impl Vec3<f64> for Vec3d {
+
+     fn wedge(a : Self, b : Self) -> Self {
+        return Vec3d::new(a.y() * b.z() - a.z() * b.y(),
+            a.x() * b.z() - a.z() * b.y(),
+            a.x() * b.y() - a.y() * b.x());
      }
 
 }

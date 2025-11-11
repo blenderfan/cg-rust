@@ -6,23 +6,28 @@
 //! This is a special-case of the Face-Vertex Mesh, but more restricted, since arbitrary polygons are not
 //! allowed.
 
+use std::marker::PhantomData;
+
 use crate::vector::Vec3;
 use crate::mesh::Mesh;
 
 use num_traits::PrimInt;
+use num_traits::Num;
 
-pub struct TriangleVertexMesh<T: Vec3, IndexType : PrimInt> {
+pub struct TriangleVertexMesh<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt> {
 
     vertices : Vec<T>,
-    indices : Vec<IndexType>
+    indices : Vec<IndexType>,
+    number_type : PhantomData<U>
 }
 
-impl<T: Vec3, IndexType : PrimInt> TriangleVertexMesh<T, IndexType> {
+impl<T: Vec3<U>, U: Num + PartialOrd<U>, IndexType : PrimInt> TriangleVertexMesh<T, U, IndexType> {
 
     pub fn new() -> Self {
         Self {
             vertices: Vec::<T>::new(),
-            indices: Vec::<IndexType>::new()
+            indices: Vec::<IndexType>::new(),
+            number_type: PhantomData
         }
     }
 
@@ -35,6 +40,6 @@ impl<T: Vec3, IndexType : PrimInt> TriangleVertexMesh<T, IndexType> {
     }
 }
 
-impl<T: Vec3, IndexType : PrimInt> Mesh<T, IndexType> for TriangleVertexMesh<T, IndexType> {
+impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt> Mesh<T, U, IndexType> for TriangleVertexMesh<T, U, IndexType> {
 
 } 

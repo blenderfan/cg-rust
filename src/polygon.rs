@@ -6,11 +6,15 @@
 //! CCW, while holes in a polygon are assumed to be CW.
 
 use core::f64;
+use std::marker::PhantomData;
+
+use num_traits::Num;
+use num_traits::Float;
 
 use crate::vector::Vec2;
 use crate::vector::Vec2d;
 
-pub trait PolygonFloat<T : Vec2, ElementType> {
+pub trait PolygonFloat<T : Vec2<U>, U : Float> {
     
     /// Generates a regular polygon where each line segment has the same length and the
     /// angle between all edges are equal as well.
@@ -20,28 +24,28 @@ pub trait PolygonFloat<T : Vec2, ElementType> {
     /// ```
     /// let poly = Polygon::Vec2d::regular(Vec2d::new(0.5, 0.5), 0.5, 6);
     /// ```
-    fn regular(center : T, radius : ElementType, corners : usize) -> Polygon<T>;
+    fn regular(center : T, radius : U, corners : usize) -> Polygon<T, U>;
 }
 
 
 
-pub struct Polygon<T: Vec2> {
+pub struct Polygon<U: Vec2<T>, T : Num + PartialOrd<T>> {
 
-    points : Vec<T>
-
+    points : Vec<U>,
+    element_type : PhantomData<T>
 }
 
-impl<T: Vec2> Polygon<T> {
+impl<U : Vec2<T>, T : Num + PartialOrd<T>> Polygon<U, T> {
 
     pub fn new() -> Self {
-        Self { points: Vec::<T>::new() }
+        Self { points: Vec::<U>::new(), element_type: PhantomData }
     }
 
     pub fn with_capacity(capacity : usize) -> Self {
-        Self { points: Vec::<T>::with_capacity(capacity) }
+        Self { points: Vec::<U>::with_capacity(capacity), element_type: PhantomData }
     }
 
-    pub fn get_points(&self) -> &Vec<T> {
+    pub fn get_points(&self) -> &Vec<U> {
         return &self.points;
     }
 
@@ -56,20 +60,46 @@ impl<T: Vec2> Polygon<T> {
     /// poly.push(Vec2f::new(1.0, 1.0));
     /// poly.push(Vec2f::new(0.0, 1.0));
     /// ```
-    pub fn push(&mut self, point : T) {
+    pub fn push(&mut self, point : U) {
         self.points.push(point);
     }
 
+    pub fn is_convex(&self) -> bool {
+
+        if self.points.len() < 3 { 
+            return false; 
+        }
+
+        let size = self.points.len();
+        let mut last_point = self.points[0];
+        let mut edge = last_point - self.points[size - 1];
+
+        for i in 0..self.points.len() {
+
+            let next_idx = (i + 1) % size;
+            let next_p = self.points[next_idx];
+
+            if U::wedge(edge, next_p) < T::zero() {
+                return false;
+            }
+
+            edge = next_p - last_point;
+            last_point = next_p;
+        }
+
+        return true;
+    }    
+
 }
 
-impl<> PolygonFloat<Vec2d, f64> for Polygon<Vec2d> {
+impl<> PolygonFloat<Vec2d, f64> for Polygon<Vec2d, f64> {
 
 
-    fn regular(center : Vec2d, radius : f64, corners : usize) -> Polygon<Vec2d> {
+    fn regular(center : Vec2d, radius : f64, corners : usize) -> Polygon<Vec2d, f64> {
         
         let angle_per_corner = f64::consts::TAU / (corners as f64);
 
-        let mut poly = Polygon::<Vec2d>::with_capacity(corners);
+        let mut poly = Polygon::<Vec2d, f64>::with_capacity(corners);
 
         for i in 0..corners {
 

@@ -15,7 +15,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .caption("Hexagon", ("sans-serif", 50))
         .build_cartesian_2d(-2.0..2.0, -1.5..1.5)?;
 
-    let polygon= Polygon::<Vec2d>::regular(Vec2d::new(0.0, 0.0), 1.0, 6);
+    let polygon= Polygon::<Vec2d, f64>::regular(Vec2d::new(0.0, 0.0), 1.0, 6);
 
     let poly_vertices = polygon.get_points();
     let mut vertices: Vec<(f64, f64)> = Vec::<(f64, f64)>::new();
