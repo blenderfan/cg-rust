@@ -20,12 +20,14 @@ pub trait Vector<T> : Sized
     + Copy
     where T : Num + PartialOrd<T> {
 
-    fn dot(a : Self, b: Self) -> T;
+    type Element;
 
+    fn dot(a : Self, b: Self) -> T;
 }
 
 pub trait Vec2<T> : Vector<T>
     where T : Num + PartialOrd<T> {
+
     fn wedge(a : Self, b :Self) -> T;
 }
 
@@ -117,6 +119,8 @@ impl Vec2i {
 }
 
 impl Vector<i32> for Vec2i {
+
+     type Element = i32;
 
      fn dot(a : Self, b :Self) -> i32 {
          return a.x() * b.x() + a.y() * b.y(); 
@@ -216,13 +220,15 @@ impl Vec2l {
 
 impl Vector<i64> for Vec2l {
 
+     type Element = i64;
+
     fn dot(a : Self, b : Self) -> i64 {
          return a.x() * b.x() + a.y() * b.y(); 
      }
-
-
 }
 impl Vec2<i64> for Vec2l {
+
+
 
      fn wedge(a : Self, b : Self) -> i64 {
          return a.x() * b.y() - a.y() * b.x();
@@ -316,13 +322,15 @@ impl Vec2f {
 
 impl Vector<f32> for Vec2f {
 
+     type Element = f32;
+
     fn dot(a : Self, b : Self) -> f32 {
          return a.x() * b.x() + a.y() * b.y(); 
      }
 
-
 }
 impl Vec2<f32> for Vec2f {
+
 
      fn wedge(a : Self, b : Self) -> f32 {
          return a.x() * b.y() - a.y() * b.x();
@@ -413,6 +421,8 @@ impl Vec2d {
 }
 
 impl Vector<f64> for Vec2d {
+
+     type Element = f64;
 
     fn dot(a : Self, b : Self) -> f64 {
          return a.x() * b.x() + a.y() * b.y(); 
@@ -512,6 +522,8 @@ impl Vec3i {
 }
 
 impl Vector<i32> for Vec3i {
+
+     type Element = i32;
 
     fn dot(a : Self, b : Self) -> i32 {
          return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
@@ -615,6 +627,8 @@ impl Vec3l {
 
 impl Vector<i64> for Vec3l {
 
+     type Element = i64;
+
     fn dot(a : Self, b : Self) -> i64 {
          return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
     }
@@ -716,6 +730,8 @@ impl Vec3f {
 }
 
 impl Vector<f32> for Vec3f {
+
+     type Element = f32;
 
     fn dot(a : Self, b : Self) -> f32 {
          return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
@@ -819,6 +835,8 @@ impl Vec3d {
 
 
 impl Vector<f64> for Vec3d {
+
+     type Element = f64;
 
     fn dot(a : Self, b : Self) -> f64 {
          return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
