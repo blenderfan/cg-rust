@@ -12,6 +12,8 @@ use std::marker::PhantomData;
 
 use num_traits::Num;
 use num_traits::Float;
+use num_traits::NumCast;
+use num_traits::PrimInt;
 
 use crate::vector::Vec2;
 use crate::vector::Vec2d;
@@ -83,6 +85,51 @@ impl< T : Num + PartialOrd<T>, U : Vec2<T>> Polygon<T, U> {
         }
     }
 
+    /// Returns all indices of concave / reflex vertices of the polygon.
+    /// Reflexive vertices build an interior angle strictly greater than 180°.
+    /// 
+    /// If the polygon is self-intersecting, Option::None is returned.
+    /// 
+    /// # Examples
+    /// ```
+    /// let mut poly = Polygon::<f64, Vec2d>::new();
+    /// poly.push_vector(Vec::from([Vec2d::new(0.0, 0.0),
+    ///                             Vec2d::new(1.0, 0.0),
+    ///                             Vec2d::new(1.0, 1.0),
+    ///                             Vec2d::new(0.0, 1.0),
+    ///                             Vec2d::new(0.5, 0.5)]));
+    /// let concave_vertices = poly.get_concave_vertices(); //Returns a HashSet containing the value 4
+    /// ```
+    pub fn get_concave_vertices(&self) -> Option<Vec<usize>> {
+
+        let mut concave_indices : Vec<usize> = Vec::<usize>::new();
+
+        if self.points.len() < 3 {
+            return Option::None;
+        }
+        //TODO polygon is simple check
+
+        let size = self.points.len();
+        let mut last_point = self.points[0];
+        let mut edge = last_point - self.points[size - 1];
+
+        for i in 0..size {
+
+            let next_idx = (i + 1) % size;
+            let next_p = self.points[next_idx];
+
+            let next_edge = next_p - last_point;
+            if U::wedge(edge, next_edge) < T::zero() {
+                concave_indices.push(i);
+            }
+            edge = next_edge;
+            last_point = next_p;
+
+        }
+
+        return Some(concave_indices);
+    }
+
     /// Checks if the polygon is convex. If it is, true is returned,
     /// if it is concave false is returned. If the polygon is not
     /// simple / self-intersecting, Option::None is returned.
@@ -107,7 +154,7 @@ impl< T : Num + PartialOrd<T>, U : Vec2<T>> Polygon<T, U> {
         let mut last_point = self.points[0];
         let mut edge = last_point - self.points[size - 1];
 
-        for i in 0..self.points.len() {
+        for i in 0..size {
 
             let next_idx = (i + 1) % size;
             let next_p = self.points[next_idx];
@@ -124,7 +171,56 @@ impl< T : Num + PartialOrd<T>, U : Vec2<T>> Polygon<T, U> {
         return Some(true);
     }
 
-      
+    fn triangulate_convex<IndexType>(&self, indices : &mut Vec<IndexType>, start : usize) where IndexType : PrimInt {
+
+        //Fan Triangulation
+        let size = self.points.len();
+
+        let mut next_idx = (start + 1) % size;
+        for i in 0..size-2 {
+
+            let next_next_idx = (start + i + 2) % size;
+
+            indices.push(NumCast::from(start).unwrap());
+            indices.push(NumCast::from(next_idx).unwrap());
+            indices.push(NumCast::from(next_next_idx).unwrap());
+
+            next_idx = next_next_idx;
+        }
+    }
+
+    /// Splits the polygon into triangles and returns a list of integers, where each triple
+    /// forms a triangle as part of the triangulation of the polygon.
+    /// 
+    /// The method will return null if the polygon is self-intersecting
+    /// 
+    /// # Examples
+    /// ```
+    /// 
+    /// ```
+    pub fn triangulate<IndexType>(&self) -> Option<Vec<IndexType>> where IndexType : PrimInt {
+
+        let mut indices : Vec<IndexType> = Vec::<IndexType>::new();
+
+        let concave_vertices = self.get_concave_vertices();
+        if concave_vertices.is_none() {
+            return None;
+        }
+
+        let unwrapped_indices = concave_vertices.unwrap();
+        let nr_of_concave_vertices = unwrapped_indices.len();
+        if nr_of_concave_vertices == 0 {
+            self.triangulate_convex(&mut indices, 0);
+        } else if nr_of_concave_vertices == 1 {
+            let concave_vertex = unwrapped_indices[0];
+            self.triangulate_convex(&mut indices, concave_vertex);
+        }
+        else {
+            return None;
+        }
+
+        return Some(indices);
+    }
 
 }
 
