@@ -7,6 +7,7 @@
 //! 
 //! A polygon is convex if for each two consecutive edges in the polygon, the angle is not obtuse (strictly larger than 180°)
 
+use core::f32;
 use core::f64;
 use std::marker::PhantomData;
 
@@ -17,6 +18,7 @@ use num_traits::PrimInt;
 
 use crate::vector::Vec2;
 use crate::vector::Vec2d;
+use crate::vector::Vec2f;
 
 pub trait PolygonFloat<U : Float, T : Vec2<U>> {
     
@@ -223,6 +225,28 @@ impl< T : Num + PartialOrd<T>, U : Vec2<T>> Polygon<T, U> {
         return Some(indices);
     }
 
+}
+
+impl<> PolygonFloat<f32, Vec2f> for Polygon<f32, Vec2f> {
+        
+    fn regular(center : Vec2f, radius : f32, corners : usize) -> Polygon<f32, Vec2f> {
+        
+        let angle_per_corner = f32::consts::TAU / (corners as f32);
+
+        let mut poly = Polygon::<f32, Vec2f>::with_capacity(corners);
+
+        for i in 0..corners {
+
+            let current_angle : f32 = angle_per_corner * i as f32;
+
+            let x_y = current_angle.sin_cos();
+            let xy_vec = Vec2f::new(x_y.1, x_y.0) * 0.5_f32 * radius + center;
+
+            poly.push(xy_vec);
+        }
+
+        return poly;
+    }
 }
 
 impl<> PolygonFloat<f64, Vec2d> for Polygon<f64, Vec2d> {

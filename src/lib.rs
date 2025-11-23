@@ -5,6 +5,8 @@ pub mod traits;
 pub mod cardinal_direction;
 
 pub mod vector;
+pub mod util;
+
 pub mod polygon;
 
 pub mod mesh;

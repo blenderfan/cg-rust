@@ -31,6 +31,21 @@ impl<T: Vec3<U>, U: Num + PartialOrd<U>, IndexType : PrimInt> TriangleVertexMesh
         }
     }
 
+    /// Construct a Triangle-Vertex Mesh by providing a list of vertices and indices.
+    /// Note that the number of indices must be a multiple of three.
+    pub fn from(vertices : Vec<T>, indices : Vec<IndexType>) -> Option<Self> {
+
+        if indices.len() % 3 != 0 {
+            return None;
+        }
+        
+        Some(Self {
+            vertices: vertices,
+            indices: indices,
+            number_type: PhantomData
+        })
+    }
+
     pub fn get_vertices(&self) -> &Vec<T> {
         return &self.vertices;
     }

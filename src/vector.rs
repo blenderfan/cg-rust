@@ -9,6 +9,9 @@ use std::ops::SubAssign;
 use std::ops::Mul;
 use std::ops::MulAssign;
 
+use std::ops::Index;
+use std::ops::IndexMut;
+
 use core::simd::prelude::*;
 
 
@@ -18,6 +21,9 @@ pub trait Vector<T> : Sized
     + AddAssign
     + SubAssign 
     + Copy
+    + Default
+    + Index<usize>
+    + IndexMut<usize>
     where T : Num + PartialOrd<T> {
 
     type Element;
@@ -99,12 +105,24 @@ impl MulAssign for Vec2i {
     }
 }
 
+impl Index<usize> for Vec2i {
+    type Output = i32;
+    fn index<'a>(&'a self, i: usize) -> &'a i32 {
+        return &self.data[i];
+    }
+}
+
+impl IndexMut<usize> for Vec2i {
+    fn index_mut(&mut self, i: usize) -> &mut Self::Output {
+        return &mut self.data[i];
+    }
+}
 
 
 impl fmt::Display for Vec2i {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "(X: {} | Y: {})", self.data.as_array()[0], self.data.as_array()[0])
+        write!(f, "(X: {} | Y: {})", self.data[0], self.data[0])
     }
 }
 
@@ -114,8 +132,14 @@ impl Vec2i {
         Self { data: Simd::from_array([x, y]) }
     }
 
-    pub fn x(&self) -> i32 { return self.data.as_array()[0]; }
-    pub fn y(&self) -> i32 { return self.data.as_array()[1]; }
+    pub fn x(&self) -> i32 { return self.data[0]; }
+    pub fn y(&self) -> i32 { return self.data[1]; }
+}
+
+impl Default for Vec2i {
+    fn default() -> Self {
+        Self { data: Simd::default() }
+    }
 }
 
 impl Vector<i32> for Vec2i {
@@ -203,10 +227,22 @@ impl MulAssign for Vec2l {
 impl fmt::Display for Vec2l {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "(X: {} | Y: {})", self.data.as_array()[0], self.data.as_array()[0])
+        write!(f, "(X: {} | Y: {})", self.data[0], self.data[0])
     }
 }
 
+impl Index<usize> for Vec2l {
+    type Output = i64;
+    fn index<'a>(&'a self, i: usize) -> &'a i64 {
+        return &self.data[i];
+    }
+}
+
+impl IndexMut<usize> for Vec2l {
+    fn index_mut(&mut self, i: usize) -> &mut Self::Output {
+        return &mut self.data[i];
+    }
+}
 
 impl Vec2l {
 
@@ -214,8 +250,14 @@ impl Vec2l {
         Self { data: Simd::from_array([x, y]) }
     }
 
-    pub fn x(&self) -> i64 { return self.data.as_array()[0]; }
-    pub fn y(&self) -> i64 { return self.data.as_array()[1]; }
+    pub fn x(&self) -> i64 { return self.data[0]; }
+    pub fn y(&self) -> i64 { return self.data[1]; }
+}
+
+impl Default for Vec2l {
+    fn default() -> Self {
+        Self { data: Simd::default() }
+    }
 }
 
 impl Vector<i64> for Vec2l {
@@ -304,10 +346,23 @@ impl MulAssign for Vec2f {
     }
 }
 
+impl Index<usize> for Vec2f {
+    type Output = f32;
+    fn index<'a>(&'a self, i: usize) -> &'a f32 {
+        return &self.data[i];
+    }
+}
+
+impl IndexMut<usize> for Vec2f {
+    fn index_mut(&mut self, i: usize) -> &mut Self::Output {
+        return &mut self.data[i];
+    }
+}
+
 impl fmt::Display for Vec2f {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "(X: {} | Y: {})", self.data.as_array()[0], self.data.as_array()[0])
+        write!(f, "(X: {} | Y: {})", self.data[0], self.data[0])
     }
 }
 
@@ -316,8 +371,15 @@ impl Vec2f {
         Self { data: Simd::from_array([x, y]) }
     }
 
-    pub fn x(&self) -> f32 { return self.data.as_array()[0]; }
-    pub fn y(&self) -> f32 { return self.data.as_array()[1]; }
+    pub fn x(&self) -> f32 { return self.data[0]; }
+    pub fn y(&self) -> f32 { return self.data[1]; }
+}
+
+
+impl Default for Vec2f {
+    fn default() -> Self {
+        Self { data: Simd::default() }
+    }
 }
 
 impl Vector<f32> for Vec2f {
@@ -404,21 +466,43 @@ impl MulAssign for Vec2d {
     }
 }
 
+impl Index<usize> for Vec2d {
+    type Output = f64;
+    fn index<'a>(&'a self, i: usize) -> &'a f64 {
+        return &self.data[i];
+    }
+}
+
+impl IndexMut<usize> for Vec2d {
+    fn index_mut(&mut self, i: usize) -> &mut Self::Output {
+        return &mut self.data[i];
+    }
+}
+
 impl fmt::Display for Vec2d {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "(X: {} | Y: {})", self.data.as_array()[0], self.data.as_array()[1])
+        write!(f, "(X: {} | Y: {})", self.data[0], self.data[1])
     }
 }
+
 
 impl Vec2d {
     pub fn new(x : f64, y : f64) -> Self {
         Self { data: Simd::from_array([x, y]) }
     }
 
-    pub fn x(&self) -> f64 { return self.data.as_array()[0]; }
-    pub fn y(&self) -> f64 { return self.data.as_array()[1]; }
+    pub fn x(&self) -> f64 { return self.data[0]; }
+    pub fn y(&self) -> f64 { return self.data[1]; }
 }
+
+
+impl Default for Vec2d {
+    fn default() -> Self {
+        Self { data: Simd::default() }
+    }
+}
+
 
 impl Vector<f64> for Vec2d {
 
@@ -427,9 +511,8 @@ impl Vector<f64> for Vec2d {
     fn dot(a : Self, b : Self) -> f64 {
          return a.x() * b.x() + a.y() * b.y(); 
      }
-
-
 }
+
 impl Vec2<f64> for Vec2d {
 
      fn wedge(a : Self, b : Self) -> f64 {
@@ -503,11 +586,23 @@ impl MulAssign for Vec3i {
     }
 }
 
+impl Index<usize> for Vec3i {
+    type Output = i32;
+    fn index<'a>(&'a self, i: usize) -> &'a i32 {
+        return &self.data[i];
+    }
+}
+
+impl IndexMut<usize> for Vec3i {
+    fn index_mut(&mut self, i: usize) -> &mut Self::Output {
+        return &mut self.data[i];
+    }
+}
+
 impl fmt::Display for Vec3i {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let arr = self.data.as_array();
-        write!(f, "(X: {} | Y: {} | Z: {})", arr[0], arr[1], arr[2])
+        write!(f, "(X: {} | Y: {} | Z: {})", self.data[0], self.data[1], self.data[2])
     }
 }
 
@@ -516,9 +611,16 @@ impl Vec3i {
         Self { data: Simd::from_array([x, y, z, 0]) }
     }
 
-    pub fn x(&self) -> i32 { return self.data.as_array()[0]; }
-    pub fn y(&self) -> i32 { return self.data.as_array()[1]; }
-    pub fn z(&self) -> i32 { return self.data.as_array()[2]; }
+    pub fn x(&self) -> i32 { return self.data[0]; }
+    pub fn y(&self) -> i32 { return self.data[1]; }
+    pub fn z(&self) -> i32 { return self.data[2]; }
+}
+
+
+impl Default for Vec3i {
+    fn default() -> Self {
+        Self { data: Simd::default() }
+    }
 }
 
 impl Vector<i32> for Vec3i {
@@ -606,12 +708,23 @@ impl MulAssign for Vec3l {
     }
 }
 
+impl Index<usize> for Vec3l {
+    type Output = i64;
+    fn index<'a>(&'a self, i: usize) -> &'a i64 {
+        return &self.data[i];
+    }
+}
+
+impl IndexMut<usize> for Vec3l {
+    fn index_mut(&mut self, i: usize) -> &mut Self::Output {
+        return &mut self.data[i];
+    }
+}
 
 impl fmt::Display for Vec3l {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let arr = self.data.as_array();
-        write!(f, "(X: {} | Y: {} | Z: {})", arr[0], arr[1], arr[2])
+        write!(f, "(X: {} | Y: {} | Z: {})", self.data[0], self.data[1], self.data[2])
     }
 }
 
@@ -620,9 +733,15 @@ impl Vec3l {
         Self { data: Simd::from_array([x, y, z, 0]) }
     }
 
-    pub fn x(&self) -> i64 { return self.data.as_array()[0]; }
-    pub fn y(&self) -> i64 { return self.data.as_array()[1]; }
-    pub fn z(&self) -> i64 { return self.data.as_array()[2]; }
+    pub fn x(&self) -> i64 { return self.data[0]; }
+    pub fn y(&self) -> i64 { return self.data[1]; }
+    pub fn z(&self) -> i64 { return self.data[2]; }
+}
+
+impl Default for Vec3l {
+    fn default() -> Self {
+        Self { data: Simd::default() }
+    }
 }
 
 impl Vector<i64> for Vec3l {
@@ -710,12 +829,23 @@ impl MulAssign for Vec3f {
     }
 }
 
+impl Index<usize> for Vec3f {
+    type Output = f32;
+    fn index<'a>(&'a self, i: usize) -> &'a f32 {
+        return &self.data[i];
+    }
+}
+
+impl IndexMut<usize> for Vec3f {
+    fn index_mut(&mut self, i: usize) -> &mut Self::Output {
+        return &mut self.data[i];
+    }
+}
 
 impl fmt::Display for Vec3f {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let arr = self.data.as_array();
-        write!(f, "(X: {} | Y: {} | Z: {})", arr[0], arr[1], arr[2])
+        write!(f, "(X: {} | Y: {} | Z: {})", self.data[0], self.data[1], self.data[2])
     }
 }
 
@@ -724,9 +854,15 @@ impl Vec3f {
         Self { data: Simd::from_array([x, y, z, 0.0_f32]) }
     }
 
-    pub fn x(&self) -> f32 { return self.data.as_array()[0]; }
-    pub fn y(&self) -> f32 { return self.data.as_array()[1]; }
-    pub fn z(&self) -> f32 { return self.data.as_array()[2]; }
+    pub fn x(&self) -> f32 { return self.data[0]; }
+    pub fn y(&self) -> f32 { return self.data[1]; }
+    pub fn z(&self) -> f32 { return self.data[2]; }
+}
+
+impl Default for Vec3f {
+    fn default() -> Self {
+        Self { data: Simd::default() }
+    }
 }
 
 impl Vector<f32> for Vec3f {
@@ -815,11 +951,24 @@ impl MulAssign for Vec3d {
     }
 }
 
+impl Index<usize> for Vec3d {
+    type Output = f64;
+    fn index<'a>(&'a self, i: usize) -> &'a f64 {
+        return &self.data[i];
+    }
+}
+
+impl IndexMut<usize> for Vec3d {
+    fn index_mut(&mut self, i: usize) -> &mut Self::Output {
+        return &mut self.data[i];
+    }
+}
+
+
 impl fmt::Display for Vec3d {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let arr = self.data.as_array();
-        write!(f, "(X: {} | Y: {} | Z: {})", arr[0], arr[1], arr[2])
+        write!(f, "(X: {} | Y: {} | Z: {})", self.data[0], self.data[1], self.data[2])
     }
 }
 
@@ -828,9 +977,15 @@ impl Vec3d {
         Self { data: Simd::from_array([x, y, z, 0.0_f64]) }
     }
 
-    pub fn x(&self) -> f64 { return self.data.as_array()[0]; }
-    pub fn y(&self) -> f64 { return self.data.as_array()[1]; }
-    pub fn z(&self) -> f64 { return self.data.as_array()[2]; }
+    pub fn x(&self) -> f64 { return self.data[0]; }
+    pub fn y(&self) -> f64 { return self.data[1]; }
+    pub fn z(&self) -> f64 { return self.data[2]; }
+}
+
+impl Default for Vec3d {
+    fn default() -> Self {
+        Self { data: Simd::default() }
+    }
 }
 
 

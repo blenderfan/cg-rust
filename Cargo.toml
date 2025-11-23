@@ -14,8 +14,17 @@ num-traits = "0.2.19"
 
 [dev-dependencies]
 plotters = "0.3.7"
-
+wgpu = "27.0.1"
+bytemuck = "1.24.0"
+winit = "0.30.12"
+env_logger = "0.11.8"
+pollster = "0.4"
+glam = "0.30.9"
 
 [[example]]
 name = "plotter_polygon"
 path = "examples/plotters/ex_polygon.rs"
+
+[[example]]
+name = "wgpu_polygon"
+path = "examples/wgpu/polygon/ex_polygon.rs"

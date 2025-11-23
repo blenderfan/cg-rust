@@ -16,7 +16,8 @@ to keep myself motivated ^^
 
 ## <a id="overview"></a>Overview
 
-Right now, only a very basic SIMD Vector classes and rudimentary Polygons are included.
+A basic SIMD Vector class is included as well as rudimentary Polygons. As of now, they can be fan triangulated, can be checked
+if they are convex or convave. It is possible to use them for very simple rendering tasks (see examples)
 
 ## <a id="dependencies"></a>Dependencies
 
@@ -31,13 +32,21 @@ Additionally, the following dependencies exist:
 There are additional dependencies for running the examples provided:
 
 > [Plotters](https://github.com/plotters-rs/plotters)
+> [WGPU](https://github.com/gfx-rs/wgpu)
 
 ## <a id="examples"></a>Examples
 
 ![Plotter Polygon Example](https://github.com/blenderfan/cg-rust/blob/master/examples/plotters/plot-data/polygon.png)
+![WGPU Polygon Example](https://github.com/blenderfan/cg-rust/blob/master/examples/wgpu/polygon/polygon.jpg)
 
 To run the examples in the crate that use plotters, use:
 
 `cargo run --example plotter_[example_name]`
 
 E.g. `cargo run --example plotter_polygon`
+
+To run examples that use WGPU, use:
+
+`cargo run --example wgpu_[example_name]`
+
+E.g. `cargo run --example wgpu_polygon`
