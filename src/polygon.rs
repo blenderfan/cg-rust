@@ -196,7 +196,8 @@ impl< T : Num + PartialOrd<T>, U : Vec2<T>> Polygon<T, U> {
     /// 
     /// # Examples
     /// ```
-    /// 
+    /// let poly = Polygon::<f64, Vec2d>::regular(Vec2d::new(0.0, 0.0), 1.0, 8);
+    /// let triangulation = poly.triangulate::<i32>();
     /// ```
     pub fn triangulate<IndexType>(&self) -> Option<Vec<IndexType>> where IndexType : PrimInt {
 
@@ -226,7 +227,7 @@ impl< T : Num + PartialOrd<T>, U : Vec2<T>> Polygon<T, U> {
 
 impl<> PolygonFloat<f64, Vec2d> for Polygon<f64, Vec2d> {
 
-
+    
     fn regular(center : Vec2d, radius : f64, corners : usize) -> Polygon<f64, Vec2d> {
         
         let angle_per_corner = f64::consts::TAU / (corners as f64);
@@ -303,6 +304,39 @@ mod unit_tests {
 
         let convex = poly.is_convex();
         assert_eq!(convex.unwrap(), true);
+    }
+
+    #[test]
+    fn test_regular_fan_triangulation() {
+
+        let poly = Polygon::<f64, Vec2d>::regular(Vec2d::new(0.0, 0.0), 1.0, 8);
+        let triangulation = poly.triangulate::<i32>();
+
+        assert_eq!(triangulation.is_some(), true);
+
+        let indices = triangulation.unwrap();
+
+        assert_eq!(indices.len(), 6*3);
+    }
+
+    #[test]
+    fn test_one_convex_vertex_fan_triangulation() {
+
+        let mut poly = Polygon::<f64, Vec2d>::new();
+        poly.push_vector(Vec::from([Vec2d::new(0.0, 0.0),
+                                        Vec2d::new(1.0, 0.0),
+                                        Vec2d::new(1.0, 1.0),
+                                        Vec2d::new(0.0, 1.0),
+                                        Vec2d::new(0.5, 0.5)]));
+
+        let triangulation = poly.triangulate::<i32>();
+
+        assert_eq!(triangulation.is_some(), true);
+
+        let indices = triangulation.unwrap();
+
+        assert_eq!(indices.len(), 3*3);
+        assert_eq!(indices[0], 4);
     }
 
 }
