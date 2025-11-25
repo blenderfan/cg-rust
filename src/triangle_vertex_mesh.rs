@@ -8,6 +8,11 @@
 
 use std::marker::PhantomData;
 
+use crate::property_map::PropertyType;
+use crate::property_map::PropertyMap;
+use crate::property_map::PropertyStore;
+use crate::property_map::VertexProperties;
+use crate::property_map::FaceProperties;
 use crate::vector::Vec3;
 use crate::mesh::Mesh;
 
@@ -18,6 +23,8 @@ pub struct TriangleVertexMesh<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : P
 
     vertices : Vec<T>,
     indices : Vec<IndexType>,
+    vertex_properties : PropertyStore,
+    face_properties : PropertyStore,
     number_type : PhantomData<U>
 }
 
@@ -27,6 +34,8 @@ impl<T: Vec3<U>, U: Num + PartialOrd<U>, IndexType : PrimInt> TriangleVertexMesh
         Self {
             vertices: Vec::<T>::new(),
             indices: Vec::<IndexType>::new(),
+            vertex_properties: PropertyStore::new(),
+            face_properties: PropertyStore::new(),
             number_type: PhantomData
         }
     }
@@ -42,6 +51,8 @@ impl<T: Vec3<U>, U: Num + PartialOrd<U>, IndexType : PrimInt> TriangleVertexMesh
         Some(Self {
             vertices: vertices,
             indices: indices,
+            vertex_properties: PropertyStore::new(),
+            face_properties: PropertyStore::new(),
             number_type: PhantomData
         })
     }
@@ -55,6 +66,29 @@ impl<T: Vec3<U>, U: Num + PartialOrd<U>, IndexType : PrimInt> TriangleVertexMesh
     }
 }
 
+impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt> VertexProperties for TriangleVertexMesh<T, U, IndexType> {
+    fn get_vertex_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> Option<&mut <M as PropertyMap>::Storage> {
+        return self.vertex_properties.get_property_map::<M>(property_type);
+    }
+
+    fn add_vertex_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> bool {
+        return self.vertex_properties.add_property_map::<M>(property_type);
+    }
+}
+
+impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt> FaceProperties for TriangleVertexMesh<T, U, IndexType> {
+    fn get_face_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> Option<&mut <M as PropertyMap>::Storage> {
+        return self.face_properties.get_property_map::<M>(property_type);
+    }
+
+    fn add_face_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> bool {
+        return self.face_properties.add_property_map::<M>(property_type);
+    }
+}
+
 impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt> Mesh<T, U, IndexType> for TriangleVertexMesh<T, U, IndexType> {
 
+
 } 
+
+

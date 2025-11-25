@@ -16,6 +16,11 @@ use num_traits::Float;
 use num_traits::NumCast;
 use num_traits::PrimInt;
 
+use crate::property_map::PropertyType;
+use crate::property_map::PropertyMap;
+use crate::property_map::PropertyStore;
+
+use crate::property_map::VertexProperties;
 use crate::vector::Vec2;
 use crate::vector::Vec2d;
 use crate::vector::Vec2f;
@@ -38,17 +43,20 @@ pub trait PolygonFloat<U : Float, T : Vec2<U>> {
 pub struct Polygon<T : Num + PartialOrd<T>, U: Vec2<T>, > {
 
     points : Vec<U>,
-    element_type : PhantomData<T>
+    vertex_properties : PropertyStore,
+    element_type : PhantomData<T>,
 }
 
 impl< T : Num + PartialOrd<T>, U : Vec2<T>> Polygon<T, U> {
 
     pub fn new() -> Self {
-        Self { points: Vec::<U>::new(), element_type: PhantomData }
+        Self { points: Vec::<U>::new(), element_type: PhantomData,
+             vertex_properties: PropertyStore::new() }
     }
 
     pub fn with_capacity(capacity : usize) -> Self {
-        Self { points: Vec::<U>::with_capacity(capacity), element_type: PhantomData }
+        Self { points: Vec::<U>::with_capacity(capacity), element_type: PhantomData,
+            vertex_properties: PropertyStore::new() }
     }
 
     pub fn get_points(&self) -> &Vec<U> {
@@ -269,6 +277,18 @@ impl<> PolygonFloat<f64, Vec2d> for Polygon<f64, Vec2d> {
         }
 
         return poly;
+    }
+}
+
+
+impl<T : Num + PartialOrd<T>, U : Vec2<T>> VertexProperties for Polygon<T, U> {
+
+    fn get_vertex_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> Option<&mut <M as PropertyMap>::Storage> {
+        return self.vertex_properties.get_property_map::<M>(property_type);
+    }
+
+    fn add_vertex_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> bool {
+        return self.vertex_properties.add_property_map::<M>(property_type);
     }
 }
 

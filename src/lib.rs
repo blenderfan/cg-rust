@@ -2,8 +2,9 @@
 #![feature(portable_simd)]
 
 pub mod traits;
-pub mod cardinal_direction;
+pub mod property_map;
 
+pub mod cardinal_direction;
 pub mod vector;
 pub mod util;
 
