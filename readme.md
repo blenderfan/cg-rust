@@ -33,7 +33,7 @@ In order to achieve this, it is required to install [cbindgen](https://github.co
 The simplest way to generate the headers and the library is to execute the powershell script called **cbindgen.ps1** in the top folder.
 Otherwise, if you want to do it on your own, then whenever you want to make the library compatible with C, the feature **"c_export"** should be activated. Here an example for how the command could look like:
 
-`cargo rustc --crate-type=cdylib`
+`cargo rustc --features c_export --crate-type=cdylib`
 
 The resulting DLL can be integrated into other projects in C#, [Python](https://docs.python.org/3/library/ctypes.html), etc. Afterwards, the C++-Header has to be automatically generated from the Rust Files. To generate, simply execute the following command:
 
