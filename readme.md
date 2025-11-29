@@ -30,7 +30,7 @@ In order to achieve this, it is required to install [cbindgen](https://github.co
 
 `cargo install --force cbindgen`
 
-The simplest way to generate the headers and the library is to execute the powershell script called **cbindgen.ps** in the top folder.
+The simplest way to generate the headers and the library is to execute the powershell script called **cbindgen.ps1** in the top folder.
 Otherwise, if you want to do it on your own, then whenever you want to make the library compatible with C, the feature **"c_export"** should be activated. Here an example for how the command could look like:
 
 `cargo rustc --crate-type=cdylib`
