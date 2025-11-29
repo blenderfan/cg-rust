@@ -1,0 +1,14 @@
+
+language = "C++"
+
+[parse]
+parse_deps = false
+clean = false
+exclude = []
+extra_bindings = []
+
+[parse.expand]
+crates = []
+all_features = false
+default_features = true
+features = ["c_export"]

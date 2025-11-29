@@ -39,7 +39,7 @@ pub trait PolygonFloat<U : Float, T : Vec2<U>> {
 }
 
 
-
+#[repr(C)]
 pub struct Polygon<T : Num + PartialOrd<T>, U: Vec2<T>, > {
 
     points : Vec<U>,

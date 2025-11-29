@@ -12,3 +12,6 @@ pub mod polygon;
 
 pub mod mesh;
 pub mod triangle_vertex_mesh;
+
+#[cfg(feature = "c_export")]
+pub mod c_export;

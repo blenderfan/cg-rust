@@ -19,6 +19,7 @@ use crate::mesh::Mesh;
 use num_traits::PrimInt;
 use num_traits::Num;
 
+#[repr(C)]
 pub struct TriangleVertexMesh<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt> {
 
     vertices : Vec<T>,

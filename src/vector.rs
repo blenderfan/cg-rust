@@ -42,6 +42,7 @@ pub trait Vec3<T> : Vector<T>
     fn wedge(a : Self, b :Self) -> Self;
 }
 
+#[repr(C)]
 #[derive(Clone, Copy)]
 pub struct Vec2i {
 
@@ -160,7 +161,7 @@ impl Vec2<i32> for Vec2i {
 }
 
 
-
+#[repr(C)]
 #[derive(Clone, Copy)]
 pub struct Vec2l {
 
@@ -279,7 +280,7 @@ impl Vec2<i64> for Vec2l {
 }
 
 
-
+#[repr(C)]
 #[derive(Clone, Copy)]
 pub struct Vec2f {
 
@@ -400,7 +401,7 @@ impl Vec2<f32> for Vec2f {
 
 }
 
-
+#[repr(C)]
 #[derive(Clone, Copy)]
 pub struct Vec2d {
 
@@ -521,7 +522,7 @@ impl Vec2<f64> for Vec2d {
 }
 
 
-
+#[repr(C)]
 #[derive(Clone, Copy)]
 pub struct Vec3i {
 
@@ -643,7 +644,7 @@ impl Vec3<i32> for Vec3i {
 }
 
 
-
+#[repr(C)]
 #[derive(Clone, Copy)]
 pub struct Vec3l {
 
@@ -765,7 +766,7 @@ impl Vec3<i64> for Vec3l {
 
 
 
-
+#[repr(C)]
 #[derive(Clone, Copy)]
 pub struct Vec3f {
 
@@ -886,7 +887,7 @@ impl Vec3<f32> for Vec3f {
 }
 
 
-
+#[repr(C)]
 #[derive(Clone, Copy)]
 pub struct Vec3d {
 

@@ -11,6 +11,7 @@ crate-type = ["dylib"]
 
 [dependencies]
 num-traits = "0.2.19" 
+libc = { version = "0.2.177", optional = true }
 
 [dev-dependencies]
 plotters = "0.3.7"
@@ -20,6 +21,9 @@ winit = "0.30.12"
 env_logger = "0.11.8"
 pollster = "0.4"
 glam = "0.30.9"
+
+[features]
+c_export = ["dep:libc"]
 
 [[example]]
 name = "plotter_polygon"
