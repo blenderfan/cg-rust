@@ -59,6 +59,10 @@ impl< T : Num + PartialOrd<T>, U : Vec2<T>> Polygon<T, U> {
             vertex_properties: PropertyStore::new() }
     }
 
+    pub fn get_mut_points(&mut self) -> &mut Vec<U> {
+        return &mut self.points;
+    }
+
     pub fn get_points(&self) -> &Vec<U> {
         return &self.points;
     }

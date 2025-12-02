@@ -19,4 +19,6 @@ extern "C" {
 
 PArray<size_t> *cg_rust_polygon_triangulate(const PArray<CVec2f> *points);
 
+PArray<CVec2f> *cg_rust_polygon_regular(CVec2f center, float radius, size_t corners);
+
 }  // extern "C"

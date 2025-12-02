@@ -14,7 +14,6 @@ use std::ops::IndexMut;
 
 use core::simd::prelude::*;
 
-
 pub trait Vector<T> : Sized 
     + Add<Self, Output = Self>
     + Sub<Self, Output = Self>
