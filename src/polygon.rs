@@ -301,6 +301,7 @@ impl<T : Num + PartialOrd<T>, U : Vec2<T>> VertexProperties for Polygon<T, U> {
 mod unit_tests {
 
     use super::*;
+    use test::Bencher;
 
     #[test]
     fn test_is_triangle_convex() {
@@ -386,5 +387,35 @@ mod unit_tests {
         assert_eq!(indices.len(), 3*3);
         assert_eq!(indices[0], 4);
     }
+
+
+    
+    #[bench]
+    fn bench_regular_10_fan_triangulation(b: &mut Bencher) {
+
+        b.iter(|| {
+        let poly = Polygon::<f64, Vec2d>::regular(Vec2d::new(0.0, 0.0), 1.0, 10);
+        poly.triangulate::<i32>();
+        });
+    }
+
+    #[bench]
+    fn bench_regular_100_fan_triangulation(b: &mut Bencher) {
+
+        b.iter(|| {
+        let poly = Polygon::<f64, Vec2d>::regular(Vec2d::new(0.0, 0.0), 1.0, 100);
+        poly.triangulate::<i32>();
+        });
+    }
+
+    #[bench]
+    fn bench_regular_1000_fan_triangulation(b: &mut Bencher) {
+
+        b.iter(|| {
+        let poly = Polygon::<f64, Vec2d>::regular(Vec2d::new(0.0, 0.0), 1.0, 1000);
+        poly.triangulate::<i32>();
+        });
+    }
+
 
 }

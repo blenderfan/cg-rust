@@ -4,6 +4,7 @@
 - [Overview](#overview)
 - [Features](#features)
 - [Examples](#examples)
+- [Benchmarks](#benchmarks)
 - [Dependencies](#dependencies)
 
 ## <a id="introduction"></a>Introduction
@@ -56,11 +57,21 @@ To run examples that use WGPU, use:
 
 E.g. `cargo run --example wgpu_polygon`
 
+## <a id="benchmarks"></a>Benchmarks
+
+To measure the performance of the library for various tasks, you can use the following command:
+
+`cargo bench`
+
+As of now, not many things are measured. In the future, this will make it comparable though to other
+solutions and libraries.
+
 ## <a id="dependencies"></a>Dependencies
 
 To build the crate, nightly rust is necessary for using the following modules:
 
 > [SIMD](https://doc.rust-lang.org/std/simd/index.html)
+> [test](https://doc.rust-lang.org/unstable-book/library-features/test.html)
 
 If the **c_export** feature is used when building, the following dependency is required:
 

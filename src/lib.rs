@@ -1,5 +1,8 @@
 
 #![feature(portable_simd)]
+#![feature(test)]
+
+extern crate test;
 
 pub mod traits;
 pub mod property_map;
