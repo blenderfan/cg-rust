@@ -1,6 +1,6 @@
 [package]
 name = "cg-rust"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Mario Binder"]
 edition = "2024"
 license = "MIT"
