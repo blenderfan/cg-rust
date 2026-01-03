@@ -7,6 +7,8 @@
 //! allowed.
 
 use std::marker::PhantomData;
+use std::collections::HashMap;
+use std::hash::Hash;
 
 use crate::property_map::PropertyType;
 use crate::property_map::PropertyMap;
@@ -15,12 +17,14 @@ use crate::property_map::VertexProperties;
 use crate::property_map::FaceProperties;
 use crate::vector::Vec3;
 use crate::mesh::Mesh;
+use crate::mesh_components::MeshComponent;
 
 use num_traits::PrimInt;
 use num_traits::Num;
+use num_traits::NumCast;
 
 #[repr(C)]
-pub struct TriangleVertexMesh<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt> {
+pub struct TriangleVertexMesh<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt + Hash> {
 
     vertices : Vec<T>,
     indices : Vec<IndexType>,
@@ -29,7 +33,7 @@ pub struct TriangleVertexMesh<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : P
     number_type : PhantomData<U>
 }
 
-impl<T: Vec3<U>, U: Num + PartialOrd<U>, IndexType : PrimInt> TriangleVertexMesh<T, U, IndexType> {
+impl<T: Vec3<U>, U: Num + PartialOrd<U>, IndexType : PrimInt + Hash> TriangleVertexMesh<T, U, IndexType> {
 
     pub fn new() -> Self {
         Self {
@@ -65,9 +69,60 @@ impl<T: Vec3<U>, U: Num + PartialOrd<U>, IndexType : PrimInt> TriangleVertexMesh
     pub fn get_indices(&self) -> &Vec<IndexType> {
         return &self.indices;
     }
+
+    // Private
+
+    fn make_vertex_vertex_incidence_map(self, map : &mut HashMap<IndexType, Vec<IndexType>>) {
+
+        let size = self.indices.len();
+        let triangle_count = size / 3;
+
+        for i in 0..triangle_count {
+
+            let idx_a = i * 3 + 0;
+            let idx_b = i * 3 + 1;
+            let idx_c = i * 3 + 2;
+
+            let v_idx_a = self.indices[idx_a];
+            let v_idx_b = self.indices[idx_b];
+            let v_idx_c = self.indices[idx_c];
+
+            unsafe {
+                if !map.contains_key(&NumCast::from(idx_a).unwrap()) {
+                    map.insert(v_idx_a, Vec::<IndexType>::new());
+                }
+
+                if !map.contains_key(&NumCast::from(idx_b).unwrap()) {
+                    map.insert(v_idx_b, Vec::<IndexType>::new());
+                }
+
+                if !map.contains_key(&NumCast::from(idx_c).unwrap()) {
+                    map.insert(v_idx_c, Vec::<IndexType>::new());
+                }
+
+                let incident_a = map.get_mut(&v_idx_a).unwrap_unchecked();
+                incident_a.push(v_idx_b);
+                incident_a.push(v_idx_c);
+
+                let incident_b = map.get_mut(&v_idx_b).unwrap_unchecked();
+                incident_b.push(v_idx_a);
+                incident_b.push(v_idx_c);
+
+                let incident_c = map.get_mut(&v_idx_c).unwrap_unchecked();
+                incident_c.push(v_idx_a);
+                incident_c.push(v_idx_b);
+            }
+
+        } 
+    }
+
+    fn make_vertex_face_incidence_map(self, map: &mut HashMap<IndexType, Vec<IndexType>>) {
+
+    }
+
 }
 
-impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt> VertexProperties for TriangleVertexMesh<T, U, IndexType> {
+impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt + Hash> VertexProperties for TriangleVertexMesh<T, U, IndexType> {
     fn get_vertex_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> Option<&mut <M as PropertyMap>::Storage> {
         return self.vertex_properties.get_property_map::<M>(property_type);
     }
@@ -77,7 +132,7 @@ impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt> VertexProperties 
     }
 }
 
-impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt> FaceProperties for TriangleVertexMesh<T, U, IndexType> {
+impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt + Hash> FaceProperties for TriangleVertexMesh<T, U, IndexType> {
     fn get_face_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> Option<&mut <M as PropertyMap>::Storage> {
         return self.face_properties.get_property_map::<M>(property_type);
     }
@@ -87,8 +142,37 @@ impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt> FaceProperties fo
     }
 }
 
-impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt> Mesh<T, U, IndexType> for TriangleVertexMesh<T, U, IndexType> {
+impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt+ Hash> Mesh<T, U, IndexType> for TriangleVertexMesh<T, U, IndexType> {
 
+
+    fn make_incidence_map(self, origin_type : MeshComponent, incident_type : MeshComponent) -> HashMap<IndexType, Vec<IndexType>> {
+
+        let mut map = HashMap::<IndexType, Vec<IndexType>>::new();
+
+        match origin_type {
+
+            MeshComponent::VERTEX => 
+                match incident_type {
+                    MeshComponent::VERTEX => self.make_vertex_vertex_incidence_map(&mut map),
+                    MeshComponent::EDGE => todo!(),
+                    MeshComponent::FACE => self.make_vertex_face_incidence_map(&mut map)
+                }
+            MeshComponent::EDGE => 
+                match incident_type {
+                    MeshComponent::VERTEX => todo!(),
+                    MeshComponent::EDGE => todo!(),
+                    MeshComponent::FACE => todo!()
+                }
+            MeshComponent::FACE => 
+                match incident_type {
+                    MeshComponent::VERTEX => todo!(),
+                    MeshComponent::EDGE => todo!(),
+                    MeshComponent::FACE => todo!()
+                }
+        }
+
+        return map;
+    }
 
 } 
 

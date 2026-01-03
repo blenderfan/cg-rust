@@ -13,6 +13,7 @@ pub mod util;
 
 pub mod polygon;
 
+pub mod mesh_components;
 pub mod mesh;
 pub mod triangle_vertex_mesh;
 
