@@ -8,6 +8,7 @@
 
 use std::marker::PhantomData;
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::hash::Hash;
 
 use crate::property_map::PropertyType;
@@ -72,7 +73,7 @@ impl<T: Vec3<U>, U: Num + PartialOrd<U>, IndexType : PrimInt + Hash> TriangleVer
 
     // Private
 
-    fn make_vertex_vertex_incidence_map(self, map : &mut HashMap<IndexType, Vec<IndexType>>) {
+    fn make_vertex_vertex_incidence_map(self, map : &mut HashMap<IndexType, HashSet<IndexType>>) {
 
         let size = self.indices.len();
         let triangle_count = size / 3;
@@ -88,36 +89,75 @@ impl<T: Vec3<U>, U: Num + PartialOrd<U>, IndexType : PrimInt + Hash> TriangleVer
             let v_idx_c = self.indices[idx_c];
 
             unsafe {
-                if !map.contains_key(&NumCast::from(idx_a).unwrap()) {
-                    map.insert(v_idx_a, Vec::<IndexType>::new());
+                if !map.contains_key(&v_idx_a) {
+                    map.insert(v_idx_a, HashSet::<IndexType>::new());
                 }
 
-                if !map.contains_key(&NumCast::from(idx_b).unwrap()) {
-                    map.insert(v_idx_b, Vec::<IndexType>::new());
+                if !map.contains_key(&v_idx_b) {
+                    map.insert(v_idx_b, HashSet::<IndexType>::new());
                 }
 
-                if !map.contains_key(&NumCast::from(idx_c).unwrap()) {
-                    map.insert(v_idx_c, Vec::<IndexType>::new());
+                if !map.contains_key(&v_idx_c) {
+                    map.insert(v_idx_c, HashSet::<IndexType>::new());
                 }
 
                 let incident_a = map.get_mut(&v_idx_a).unwrap_unchecked();
-                incident_a.push(v_idx_b);
-                incident_a.push(v_idx_c);
+                incident_a.insert(v_idx_b);
+                incident_a.insert(v_idx_c);
 
                 let incident_b = map.get_mut(&v_idx_b).unwrap_unchecked();
-                incident_b.push(v_idx_a);
-                incident_b.push(v_idx_c);
+                incident_b.insert(v_idx_a);
+                incident_b.insert(v_idx_c);
 
                 let incident_c = map.get_mut(&v_idx_c).unwrap_unchecked();
-                incident_c.push(v_idx_a);
-                incident_c.push(v_idx_b);
+                incident_c.insert(v_idx_a);
+                incident_c.insert(v_idx_b);
             }
 
         } 
     }
 
-    fn make_vertex_face_incidence_map(self, map: &mut HashMap<IndexType, Vec<IndexType>>) {
+    fn make_vertex_face_incidence_map(self, map: &mut HashMap<IndexType, HashSet<IndexType>>) {
 
+        let size = self.indices.len();
+        let triangle_count = size / 3;
+
+        for i in 0..triangle_count {
+
+            let idx_a = i * 3 + 0;
+            let idx_b = i * 3 + 1;
+            let idx_c = i * 3 + 2;
+
+            let v_idx_a = self.indices[idx_a];
+            let v_idx_b = self.indices[idx_b];
+            let v_idx_c = self.indices[idx_c];
+
+            unsafe {
+
+                if !map.contains_key(&v_idx_a) {
+                    map.insert(v_idx_a, HashSet::<IndexType>::new());
+                }
+
+                if !map.contains_key(&v_idx_b) {
+                    map.insert(v_idx_b, HashSet::<IndexType>::new());
+                }
+
+                if !map.contains_key(&v_idx_c) {
+                    map.insert(v_idx_c, HashSet::<IndexType>::new());
+                }
+
+                let idx = NumCast::from(i).unwrap();
+
+                let incident_a = map.get_mut(&v_idx_a).unwrap_unchecked();
+                incident_a.insert(idx);
+
+                let incident_b = map.get_mut(&v_idx_b).unwrap_unchecked();
+                incident_b.insert(idx);
+
+                let incident_c = map.get_mut(&v_idx_c).unwrap_unchecked();
+                incident_c.insert(idx);
+            }
+        }
     }
 
 }
@@ -145,9 +185,9 @@ impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt + Hash> FaceProper
 impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt+ Hash> Mesh<T, U, IndexType> for TriangleVertexMesh<T, U, IndexType> {
 
 
-    fn make_incidence_map(self, origin_type : MeshComponent, incident_type : MeshComponent) -> HashMap<IndexType, Vec<IndexType>> {
+    fn make_incidence_map(self, origin_type : MeshComponent, incident_type : MeshComponent) -> HashMap<IndexType, HashSet<IndexType>> {
 
-        let mut map = HashMap::<IndexType, Vec<IndexType>>::new();
+        let mut map = HashMap::<IndexType, HashSet<IndexType>>::new();
 
         match origin_type {
 
@@ -177,3 +217,86 @@ impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt+ Hash> Mesh<T, U, 
 } 
 
 
+#[cfg(test)]
+mod unit_tests {
+
+    use crate::{mesh::Mesh, triangle_vertex_mesh::TriangleVertexMesh, vector::Vec3f};
+    use crate::mesh_components::MeshComponent;
+
+    fn create_unit_cube() -> TriangleVertexMesh<Vec3f, f32, i32> {
+
+        //Unit Cube
+        let vertices = Vec::from(
+            [Vec3f::new(0.0, 0.0, 0.0),
+            Vec3f::new(1.0, 0.0, 0.0),
+            Vec3f::new(0.0, 1.0, 0.0),
+            Vec3f::new(1.0, 1.0, 0.0),
+            Vec3f::new(0.0, 0.0, 1.0),
+            Vec3f::new(1.0, 0.0, 1.0),
+            Vec3f::new(0.0, 1.0, 1.0),
+            Vec3f::new(1.0, 1.0, 1.0),
+            ]);
+
+        let indices = Vec::from(
+            [
+                //Front
+                0, 1, 3,
+                0, 3, 2,
+
+                //Back
+                5, 4, 6,
+                5, 6, 7,
+
+                //Left
+                4, 0, 3,
+                4, 3, 6,
+
+                //Right
+                1, 5, 7,
+                1, 7, 3,
+
+                //Top
+                2, 3, 7,
+                2, 7, 6,
+
+                //Bottom
+                4, 5, 1,
+                4, 1, 0
+            ]);
+
+        let cube = TriangleVertexMesh::from(vertices, indices);
+        return cube.unwrap();
+
+    }
+
+    #[test]
+    fn test_vertex_vertex_map() {
+
+        let ucube = create_unit_cube();
+
+        let vv_map = ucube.make_incidence_map(MeshComponent::VERTEX, MeshComponent::VERTEX);
+        assert_eq!(vv_map.len(), 8);
+
+        let v0_incidence = vv_map.get(&0);
+        assert!(v0_incidence.is_some());
+
+        let uv0_incidence = v0_incidence.unwrap();
+        assert_eq!(uv0_incidence.len(), 4);
+
+    }
+
+    #[test]
+    fn test_vertex_face_map() {
+
+        let ucube = create_unit_cube();
+
+        let vertex_triangle_map = ucube.make_incidence_map(MeshComponent::VERTEX, MeshComponent::FACE);
+        assert_eq!(vertex_triangle_map.len(), 8);
+
+        let v0_incidence = vertex_triangle_map.get(&0);
+        assert!(v0_incidence.is_some());
+
+        let uv0_incidence = v0_incidence.unwrap();
+        assert_eq!(uv0_incidence.len(), 4);
+    }
+}
