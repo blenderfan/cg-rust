@@ -214,6 +214,26 @@ impl<T: Vec3<U>, U : Num + PartialOrd<U>, IndexType : PrimInt+ Hash> Mesh<T, U, 
         return map;
     }
 
+    fn get_face(self, idx: IndexType) -> Vec<IndexType> {
+
+        let mut triangle_indices = Vec::<IndexType>::with_capacity(3);
+
+        let idx = idx.to_usize().unwrap();
+        let a = idx * 3 + 0;
+        let b = idx * 3 + 1;
+        let c = idx * 3 + 2;
+
+        let idx_a = self.indices[a];
+        let idx_b = self.indices[b];
+        let idx_c = self.indices[c];
+
+        triangle_indices.push(idx_a);
+        triangle_indices.push(idx_b);
+        triangle_indices.push(idx_c);
+
+        return triangle_indices;
+    }
+
 } 
 
 
