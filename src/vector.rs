@@ -1,6 +1,7 @@
 
 use std::fmt;
 use num_traits::Num;
+use num_traits::Float;
 
 use std::ops::Add;
 use std::ops::AddAssign;
@@ -27,7 +28,8 @@ pub trait Vector<T> : Sized
 
     type Element;
 
-    fn dot(a : Self, b: Self) -> T;
+    fn dot(a : &Self, b: &Self) -> T;
+
 }
 
 pub trait Vec2<T> : Vector<T>
@@ -40,6 +42,15 @@ pub trait Vec3<T> : Vector<T>
     where T : Num + PartialOrd<T> {
     fn wedge(a : Self, b :Self) -> Self;
 }
+
+pub trait FloatVector<T : Float> : Vector<T> {
+
+    fn normalize(&self) -> Result<Self, &'static str>;
+
+    fn length(&self) -> T;
+    fn angle(a : &Self, b: &Self) -> T;
+}
+
 
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -146,10 +157,9 @@ impl Vector<i32> for Vec2i {
 
      type Element = i32;
 
-     fn dot(a : Self, b :Self) -> i32 {
+     fn dot(a : &Self, b : &Self) -> i32 {
          return a.x() * b.x() + a.y() * b.y(); 
      }
-
 
 }
 impl Vec2<i32> for Vec2i {
@@ -264,9 +274,10 @@ impl Vector<i64> for Vec2l {
 
      type Element = i64;
 
-    fn dot(a : Self, b : Self) -> i64 {
+    fn dot(a : &Self, b : &Self) -> i64 {
          return a.x() * b.x() + a.y() * b.y(); 
-     }
+    }
+
 }
 impl Vec2<i64> for Vec2l {
 
@@ -384,13 +395,34 @@ impl Default for Vec2f {
 
 impl Vector<f32> for Vec2f {
 
-     type Element = f32;
+    type Element = f32;
 
-    fn dot(a : Self, b : Self) -> f32 {
+    fn dot(a : &Self, b : &Self) -> f32 {
          return a.x() * b.x() + a.y() * b.y(); 
      }
 
 }
+
+impl FloatVector<f32> for Vec2f {
+
+    fn length(&self) -> f32 {
+        return f32::sqrt(Vec2f::dot(self, self));
+    }
+
+    fn angle(a : &Self, b: &Self) -> f32 {
+        return f32::acos(Vec2f::dot(a, b) / (a.length() * b.length()));
+    }
+
+    fn normalize(&self) -> Result<Self, &'static str> {
+        
+        let l = self.length();
+        if l == 0.0_f32 {
+            return Err("[CGRust]: Trying to normallize zero-vector!");
+        }
+        return Ok(*self * (1.0_f32 / l));
+    }
+}
+
 impl Vec2<f32> for Vec2f {
 
 
@@ -508,9 +540,30 @@ impl Vector<f64> for Vec2d {
 
      type Element = f64;
 
-    fn dot(a : Self, b : Self) -> f64 {
+    fn dot(a : &Self, b : &Self) -> f64 {
          return a.x() * b.x() + a.y() * b.y(); 
      }
+}
+
+
+impl FloatVector<f64> for Vec2d {
+
+    fn length(&self) -> f64 {
+        return f64::sqrt(Vec2d::dot(self, self));
+    }
+
+    fn angle(a : &Self, b: &Self) -> f64 {
+        return f64::acos(Vec2d::dot(a, b) / (a.length() * b.length()));
+    }
+
+    fn normalize(&self) -> Result<Self, &'static str> {
+        
+        let l = self.length();
+        if l == 0.0_f64 {
+            return Err("[CGRust]: Trying to normallize zero-vector!");
+        }
+        return Ok(*self * (1.0_f64 / l));
+    }
 }
 
 impl Vec2<f64> for Vec2d {
@@ -627,7 +680,7 @@ impl Vector<i32> for Vec3i {
 
      type Element = i32;
 
-    fn dot(a : Self, b : Self) -> i32 {
+    fn dot(a : &Self, b : &Self) -> i32 {
          return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
     }
 }
@@ -748,7 +801,7 @@ impl Vector<i64> for Vec3l {
 
      type Element = i64;
 
-    fn dot(a : Self, b : Self) -> i64 {
+    fn dot(a : &Self, b : &Self) -> i64 {
          return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
     }
 }
@@ -869,8 +922,28 @@ impl Vector<f32> for Vec3f {
 
      type Element = f32;
 
-    fn dot(a : Self, b : Self) -> f32 {
+    fn dot(a : &Self, b : &Self) -> f32 {
          return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
+    }
+}
+
+impl FloatVector<f32> for Vec3f {
+
+    fn length(&self) -> f32 {
+        return f32::sqrt(Vec3f::dot(self, self));
+    }
+
+    fn angle(a : &Self, b: &Self) -> f32 {
+        return f32::acos(Vec3f::dot(a, b) / (a.length() * b.length()));
+    }
+
+    fn normalize(&self) -> Result<Self, &'static str> {
+        
+        let l = self.length();
+        if l == 0.0_f32 {
+            return Err("[CGRust]: Trying to normallize zero-vector!");
+        }
+        return Ok(*self * (1.0_f32 / l));
     }
 }
 
@@ -993,8 +1066,28 @@ impl Vector<f64> for Vec3d {
 
      type Element = f64;
 
-    fn dot(a : Self, b : Self) -> f64 {
+    fn dot(a : &Self, b : &Self) -> f64 {
          return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
+    }
+}
+
+impl FloatVector<f64> for Vec3d {
+
+    fn length(&self) -> f64 {
+        return f64::sqrt(Vec3d::dot(self, self));
+    }
+
+    fn angle(a : &Self, b: &Self) -> f64 {
+        return f64::acos(Vec3d::dot(a, b) / (a.length() * b.length()));
+    }
+
+    fn normalize(&self) -> Result<Self, &'static str> {
+        
+        let l = self.length();
+        if l == 0.0_f64 {
+            return Err("[CGRust]: Trying to normallize zero-vector!");
+        }
+        return Ok(*self * (1.0_f64 / l));
     }
 }
 

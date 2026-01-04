@@ -7,6 +7,7 @@ extern crate test;
 pub mod traits;
 pub mod property_map;
 
+pub mod math;
 pub mod cardinal_direction;
 pub mod vector;
 pub mod util;
