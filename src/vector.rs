@@ -29,18 +29,35 @@ pub trait Vector<T> : Sized
     type Element;
 
     fn dot(a : &Self, b: &Self) -> T;
+    /// Componentwise multiplication, also called hadamard product
+    fn cmul(a : &Self, b: &Self) -> Self;
 
+    //TODO Change to "const fn" after supported by Rust! (https://github.com/rust-lang/rfcs/pull/3490)
+    fn zero() -> Self;
 }
 
 pub trait Vec2<T> : Vector<T>
     where T : Num + PartialOrd<T> {
 
+    fn new(x : T, y : T) -> Self;
+
     fn wedge(a : Self, b :Self) -> T;
+
+    fn x(&self) -> T;
+    fn y(&self) -> T;
 }
 
 pub trait Vec3<T> : Vector<T> 
     where T : Num + PartialOrd<T> {
-    fn wedge(a : Self, b :Self) -> Self;
+
+    fn new(x : T, y : T, z : T) -> Self;
+
+    fn wedge(a : Self, b : Self) -> Self;
+    fn cross(a : Self, b : Self) -> Self;
+
+    fn x(&self) -> T;
+    fn y(&self) -> T;
+    fn z(&self) -> T;
 }
 
 pub trait FloatVector<T : Float> : Vector<T> {
@@ -139,12 +156,8 @@ impl fmt::Display for Vec2i {
 
 impl Vec2i {
 
-    pub fn new(x : i32, y : i32) -> Self {
-        Self { data: Simd::from_array([x, y]) }
-    }
 
-    pub fn x(&self) -> i32 { return self.data[0]; }
-    pub fn y(&self) -> i32 { return self.data[1]; }
+
 }
 
 impl Default for Vec2i {
@@ -155,18 +168,33 @@ impl Default for Vec2i {
 
 impl Vector<i32> for Vec2i {
 
-     type Element = i32;
+    type Element = i32;
 
-     fn dot(a : &Self, b : &Self) -> i32 {
+    fn dot(a : &Self, b : &Self) -> i32 {
          return a.x() * b.x() + a.y() * b.y(); 
-     }
+    }
+
+    fn cmul(a : &Self, b : &Self) -> Self {
+        return Self { data: a.data * b.data };
+    }
+
+    fn zero() -> Self {
+        return Vec2i::new(0, 0);
+    }
 
 }
 impl Vec2<i32> for Vec2i {
 
-     fn wedge(a : Self, b :Self) -> i32 {
+    fn new(x : i32, y : i32) -> Self {
+        Self { data: Simd::from_array([x, y]) }
+    }
+
+    fn wedge(a : Self, b :Self) -> i32 {
          return a.x() * b.y() - a.y() * b.x();
      }
+     
+    fn x(&self) -> i32 { return self.data[0]; }
+    fn y(&self) -> i32 { return self.data[1]; }
 }
 
 
@@ -256,12 +284,7 @@ impl IndexMut<usize> for Vec2l {
 
 impl Vec2l {
 
-    pub fn new(x : i64, y : i64) -> Self {
-        Self { data: Simd::from_array([x, y]) }
-    }
 
-    pub fn x(&self) -> i64 { return self.data[0]; }
-    pub fn y(&self) -> i64 { return self.data[1]; }
 }
 
 impl Default for Vec2l {
@@ -272,21 +295,34 @@ impl Default for Vec2l {
 
 impl Vector<i64> for Vec2l {
 
-     type Element = i64;
+    type Element = i64;
 
     fn dot(a : &Self, b : &Self) -> i64 {
          return a.x() * b.x() + a.y() * b.y(); 
     }
 
+    fn cmul(a : &Self, b : &Self) -> Self {
+        return Self { data: a.data * b.data };
+    }
+
+    fn zero() -> Self {
+        return Vec2l::new(0, 0);
+    }
 }
+
 impl Vec2<i64> for Vec2l {
 
+    fn new(x : i64, y : i64) -> Self {
+        Self { data: Simd::from_array([x, y]) }
+    }
 
-
-     fn wedge(a : Self, b : Self) -> i64 {
+    fn wedge(a : Self, b : Self) -> i64 {
          return a.x() * b.y() - a.y() * b.x();
-     }
+    }
 
+     
+    fn x(&self) -> i64 { return self.data[0]; }
+    fn y(&self) -> i64 { return self.data[1]; }
 }
 
 
@@ -378,12 +414,8 @@ impl fmt::Display for Vec2f {
 }
 
 impl Vec2f {
-    pub fn new(x : f32, y : f32) -> Self {
-        Self { data: Simd::from_array([x, y]) }
-    }
 
-    pub fn x(&self) -> f32 { return self.data[0]; }
-    pub fn y(&self) -> f32 { return self.data[1]; }
+
 }
 
 
@@ -399,8 +431,15 @@ impl Vector<f32> for Vec2f {
 
     fn dot(a : &Self, b : &Self) -> f32 {
          return a.x() * b.x() + a.y() * b.y(); 
-     }
+    }
 
+    fn cmul(a : &Self, b : &Self) -> Self {
+        return Self { data: a.data * b.data };
+    }
+
+    fn zero() -> Self {
+        return Vec2f::new(0.0_f32, 0.0_f32);
+    }
 }
 
 impl FloatVector<f32> for Vec2f {
@@ -425,11 +464,16 @@ impl FloatVector<f32> for Vec2f {
 
 impl Vec2<f32> for Vec2f {
 
+    fn new(x : f32, y : f32) -> Self {
+        Self { data: Simd::from_array([x, y]) }
+    }
 
-     fn wedge(a : Self, b : Self) -> f32 {
+    fn wedge(a : Self, b : Self) -> f32 {
          return a.x() * b.y() - a.y() * b.x();
-     }
+    }
 
+    fn x(&self) -> f32 { return self.data[0]; }
+    fn y(&self) -> f32 { return self.data[1]; }
 }
 
 #[repr(C)]
@@ -520,12 +564,8 @@ impl fmt::Display for Vec2d {
 
 
 impl Vec2d {
-    pub fn new(x : f64, y : f64) -> Self {
-        Self { data: Simd::from_array([x, y]) }
-    }
 
-    pub fn x(&self) -> f64 { return self.data[0]; }
-    pub fn y(&self) -> f64 { return self.data[1]; }
+
 }
 
 
@@ -538,11 +578,19 @@ impl Default for Vec2d {
 
 impl Vector<f64> for Vec2d {
 
-     type Element = f64;
+    type Element = f64;
 
     fn dot(a : &Self, b : &Self) -> f64 {
          return a.x() * b.x() + a.y() * b.y(); 
-     }
+    }
+
+    fn cmul(a : &Self, b : &Self) -> Self {
+        return Self { data: a.data * b.data };
+    }
+
+    fn zero() -> Self {
+        return Vec2d::new(0.0_f64, 0.0_f64);
+    }
 }
 
 
@@ -568,9 +616,16 @@ impl FloatVector<f64> for Vec2d {
 
 impl Vec2<f64> for Vec2d {
 
-     fn wedge(a : Self, b : Self) -> f64 {
+    fn new(x : f64, y : f64) -> Self {
+        Self { data: Simd::from_array([x, y]) }
+    }
+
+    fn wedge(a : Self, b : Self) -> f64 {
          return a.x() * b.y() - a.y() * b.x();
-     }
+    }
+
+    fn x(&self) -> f64 { return self.data[0]; }
+    fn y(&self) -> f64 { return self.data[1]; }
 }
 
 
@@ -660,13 +715,8 @@ impl fmt::Display for Vec3i {
 }
 
 impl Vec3i {
-    pub fn new(x : i32, y : i32, z: i32) -> Self {
-        Self { data: Simd::from_array([x, y, z, 0]) }
-    }
 
-    pub fn x(&self) -> i32 { return self.data[0]; }
-    pub fn y(&self) -> i32 { return self.data[1]; }
-    pub fn z(&self) -> i32 { return self.data[2]; }
+
 }
 
 
@@ -678,21 +728,41 @@ impl Default for Vec3i {
 
 impl Vector<i32> for Vec3i {
 
-     type Element = i32;
+    type Element = i32;
 
     fn dot(a : &Self, b : &Self) -> i32 {
          return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
+    }
+
+    fn cmul(a : &Self, b : &Self) -> Self {
+        return Self { data: a.data * b.data };
+    }
+
+    fn zero() -> Self {
+        return Vec3i::new(0, 0, 0);
     }
 }
 
 impl Vec3<i32> for Vec3i {
 
-     fn wedge(a : Self, b : Self) -> Self {
+    fn new(x : i32, y : i32, z: i32) -> Self {
+        Self { data: Simd::from_array([x, y, z, 0]) }
+    }
+
+    fn wedge(a : Self, b : Self) -> Self {
         return Vec3i::new(a.y() * b.z() - a.z() * b.y(),
             a.x() * b.z() - a.z() * b.y(),
             a.x() * b.y() - a.y() * b.x());
-     }
+    }
 
+    fn cross(a : Self, b: Self) -> Self {
+        return Self::wedge(a, b);
+    }
+
+
+    fn x(&self) -> i32 { return self.data[0]; }
+    fn y(&self) -> i32 { return self.data[1]; }
+    fn z(&self) -> i32 { return self.data[2]; }
 }
 
 
@@ -782,13 +852,8 @@ impl fmt::Display for Vec3l {
 }
 
 impl Vec3l {
-    pub fn new(x : i64, y : i64, z: i64) -> Self {
-        Self { data: Simd::from_array([x, y, z, 0]) }
-    }
 
-    pub fn x(&self) -> i64 { return self.data[0]; }
-    pub fn y(&self) -> i64 { return self.data[1]; }
-    pub fn z(&self) -> i64 { return self.data[2]; }
+
 }
 
 impl Default for Vec3l {
@@ -799,21 +864,41 @@ impl Default for Vec3l {
 
 impl Vector<i64> for Vec3l {
 
-     type Element = i64;
+    type Element = i64;
 
     fn dot(a : &Self, b : &Self) -> i64 {
          return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
+    }
+
+    fn cmul(a : &Self, b : &Self) -> Self {
+        return Self { data: a.data * b.data };
+    }
+
+    fn zero() -> Self {
+        return Vec3l::new(0, 0, 0);
     }
 }
 
 impl Vec3<i64> for Vec3l {
 
-     fn wedge(a : Self, b : Self) -> Self {
+    fn new(x : i64, y : i64, z: i64) -> Self {
+        Self { data: Simd::from_array([x, y, z, 0]) }
+    }
+
+    fn wedge(a : Self, b : Self) -> Self {
         return Vec3l::new(a.y() * b.z() - a.z() * b.y(),
             a.x() * b.z() - a.z() * b.y(),
             a.x() * b.y() - a.y() * b.x());
-     }
+    }
 
+    fn cross(a : Self, b: Self) -> Self {
+        return Self::wedge(a, b);
+    }
+
+
+    fn x(&self) -> i64 { return self.data[0]; }
+    fn y(&self) -> i64 { return self.data[1]; }
+    fn z(&self) -> i64 { return self.data[2]; }
 }
 
 
@@ -903,13 +988,8 @@ impl fmt::Display for Vec3f {
 }
 
 impl Vec3f {
-    pub fn new(x : f32, y : f32, z: f32) -> Self {
-        Self { data: Simd::from_array([x, y, z, 0.0_f32]) }
-    }
 
-    pub fn x(&self) -> f32 { return self.data[0]; }
-    pub fn y(&self) -> f32 { return self.data[1]; }
-    pub fn z(&self) -> f32 { return self.data[2]; }
+
 }
 
 impl Default for Vec3f {
@@ -920,10 +1000,18 @@ impl Default for Vec3f {
 
 impl Vector<f32> for Vec3f {
 
-     type Element = f32;
+    type Element = f32;
 
     fn dot(a : &Self, b : &Self) -> f32 {
          return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
+    }
+
+    fn cmul(a : &Self, b : &Self) -> Self {
+        return Self { data: a.data * b.data };
+    }
+
+    fn zero() -> Self {
+        return Vec3f::new(0.0_f32, 0.0_f32, 0.0_f32);
     }
 }
 
@@ -949,13 +1037,23 @@ impl FloatVector<f32> for Vec3f {
 
 impl Vec3<f32> for Vec3f {
 
+    fn new(x : f32, y : f32, z: f32) -> Self {
+        Self { data: Simd::from_array([x, y, z, 0.0_f32]) }
+    }
 
-     fn wedge(a : Self, b : Self) -> Self {
+    fn wedge(a : Self, b : Self) -> Self {
         return Vec3f::new(a.y() * b.z() - a.z() * b.y(),
             a.x() * b.z() - a.z() * b.y(),
             a.x() * b.y() - a.y() * b.x());
      }
 
+    fn cross(a : Self, b: Self) -> Self {
+        return Self::wedge(a, b);
+    }
+
+    fn x(&self) -> f32 { return self.data[0]; }
+    fn y(&self) -> f32 { return self.data[1]; }
+    fn z(&self) -> f32 { return self.data[2]; }
 }
 
 
@@ -1046,13 +1144,7 @@ impl fmt::Display for Vec3d {
 }
 
 impl Vec3d {
-    pub fn new(x : f64, y : f64, z: f64) -> Self {
-        Self { data: Simd::from_array([x, y, z, 0.0_f64]) }
-    }
 
-    pub fn x(&self) -> f64 { return self.data[0]; }
-    pub fn y(&self) -> f64 { return self.data[1]; }
-    pub fn z(&self) -> f64 { return self.data[2]; }
 }
 
 impl Default for Vec3d {
@@ -1064,10 +1156,18 @@ impl Default for Vec3d {
 
 impl Vector<f64> for Vec3d {
 
-     type Element = f64;
+    type Element = f64;
 
     fn dot(a : &Self, b : &Self) -> f64 {
          return a.x() * b.x() + a.y() * b.y() + a.z() * b.z(); 
+    }
+    
+    fn cmul(a : &Self, b : &Self) -> Self {
+        return Self { data: a.data * b.data };
+    }
+
+    fn zero() -> Self {
+        return Vec3d::new(0.0_f64, 0.0_f64, 0.0_f64);
     }
 }
 
@@ -1093,12 +1193,23 @@ impl FloatVector<f64> for Vec3d {
 
 impl Vec3<f64> for Vec3d {
 
-     fn wedge(a : Self, b : Self) -> Self {
+    fn new(x : f64, y : f64, z: f64) -> Self {
+        Self { data: Simd::from_array([x, y, z, 0.0_f64]) }
+    }
+
+    fn wedge(a : Self, b : Self) -> Self {
         return Vec3d::new(a.y() * b.z() - a.z() * b.y(),
             a.x() * b.z() - a.z() * b.y(),
             a.x() * b.y() - a.y() * b.x());
-     }
+    }
 
+    fn cross(a : Self, b: Self) -> Self {
+        return Self::wedge(a, b);
+    }
+
+    fn x(&self) -> f64 { return self.data[0]; }
+    fn y(&self) -> f64 { return self.data[1]; }
+    fn z(&self) -> f64 { return self.data[2]; }
 }
 
 

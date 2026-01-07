@@ -14,7 +14,29 @@ pub mod mesh_normals {
     use crate::mesh::Mesh;
 
     pub fn calculate_face_normal<T: Vec3<U> + FloatVector<U>, U : Num + PartialOrd<U> + Float>(vertices: Vec<T>) -> Option<T> {
-        return None;
+
+        let mut sum = T::zero();
+
+        let size = vertices.len();
+        if size < 3 { return None; }
+
+        let mut current = vertices[0];
+        let mut next = vertices[1];
+
+        for i in 0..size {
+
+            let diff = current - next;
+            let add = current + next;
+
+            sum += T::new(diff.y() * add.z(), diff.z() * add.x(), diff.x() * add.y());
+
+            current = next;
+            next = vertices[(i + 1) % size];
+        }
+
+        let n = sum.normalize();
+        if n.is_ok() { return n.ok();}
+        else { return None; }
     }
 
     /// Creates normals for vertices based on incident faces, such that larger angles, formed by the two adjacent edges to the vertex of the face,
@@ -46,6 +68,7 @@ pub mod mesh_normals {
 
                 let mut next_vertex_idx = vertex_idx;
                 let mut prev_vertex_idx = vertex_idx;
+                let mut face_vertices = Vec::<T>::with_capacity(face_size);
 
                 for i in 0..face_size {
 
@@ -57,6 +80,7 @@ pub mod mesh_normals {
                         next_vertex_idx = face[next_i];
                         prev_vertex_idx = face[prev_i];
                     }
+                    face_vertices[i] = vertices[face_vertex_idx.to_usize().unwrap()];
                 }
 
                 let next_vertex = vertices[next_vertex_idx.to_usize().unwrap()];
@@ -68,6 +92,12 @@ pub mod mesh_normals {
                 let angle = T::angle(&prev_edge, &next_edge);
 
                 angles[counter] = angle;
+                let face_normal = calculate_face_normal(face_vertices);
+                if face_normal.is_some() {
+                    normals[counter] = face_normal.unwrap();
+                } else {
+                    normals[counter] = T::zero();
+                }
 
                 angle_sum = angle_sum + angle;
                 counter += 1;
