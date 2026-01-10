@@ -1,5 +1,6 @@
 
 use cg_rust::vector::Vec2d;
+use cg_rust::vector::Vec2;
 use cg_rust::polygon::{Polygon, PolygonFloat};
 use plotters::prelude::*;
 

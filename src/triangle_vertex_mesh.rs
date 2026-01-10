@@ -164,22 +164,22 @@ impl<T: Vec3<U> + FloatVector<U>, U: Num + PartialOrd<U> + Float, IndexType : Pr
 }
 
 impl<T: Vec3<U> + FloatVector<U>, U : Num + PartialOrd<U> + Float, IndexType : PrimInt + Hash + Unsigned> VertexProperties for TriangleVertexMesh<T, U, IndexType> {
-    fn get_vertex_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> Option<&mut <M as PropertyMap>::Storage> {
-        return self.vertex_properties.get_property_map::<M>(property_type);
+    fn get_vertex_property<M: PropertyMap<V> + 'static, V>(&mut self, property_type : PropertyType) -> Option<&mut M> {
+        return self.vertex_properties.get_property_map::<M, V>(property_type);
     }
 
-    fn add_vertex_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> bool {
-        return self.vertex_properties.add_property_map::<M>(property_type);
+    fn add_vertex_property<M: PropertyMap<V> + 'static, V>(&mut self, map : M) -> bool {
+        return self.vertex_properties.add_property_map::<M, V>(map);
     }
 }
 
 impl<T: Vec3<U> + FloatVector<U>, U : Num + PartialOrd<U> + Float, IndexType : PrimInt + Hash + Unsigned> FaceProperties for TriangleVertexMesh<T, U, IndexType> {
-    fn get_face_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> Option<&mut <M as PropertyMap>::Storage> {
-        return self.face_properties.get_property_map::<M>(property_type);
+    fn get_face_property<M: PropertyMap<V> + 'static, V>(&mut self, property_type: PropertyType) -> Option<&mut M> {
+        return self.face_properties.get_property_map::<M, V>(property_type);
     }
 
-    fn add_face_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> bool {
-        return self.face_properties.add_property_map::<M>(property_type);
+    fn add_face_property<M: PropertyMap<V> + 'static, V>(&mut self, map : M) -> bool {
+        return self.face_properties.add_property_map::<M, V>(map);
     }
 }
 
@@ -245,8 +245,10 @@ impl<T: Vec3<U> + FloatVector<U>, U : Num + PartialOrd<U> + Float, IndexType : P
 #[cfg(test)]
 mod unit_tests {
 
-    use crate::{mesh::Mesh, triangle_vertex_mesh::TriangleVertexMesh, vector::Vec3f};
+    use crate::{mesh::Mesh, triangle_vertex_mesh::TriangleVertexMesh};
     use crate::mesh_components::MeshComponent;
+    use crate::vector::Vec3f;
+    use crate::vector::Vec3;
 
     fn create_unit_cube() -> TriangleVertexMesh<Vec3f, f32, u32> {
 
@@ -324,4 +326,7 @@ mod unit_tests {
         let uv0_incidence = v0_incidence.unwrap();
         assert_eq!(uv0_incidence.len(), 4);
     }
+
+
+
 }

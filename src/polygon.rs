@@ -287,12 +287,12 @@ impl<> PolygonFloat<f64, Vec2d> for Polygon<f64, Vec2d> {
 
 impl<T : Num + PartialOrd<T>, U : Vec2<T>> VertexProperties for Polygon<T, U> {
 
-    fn get_vertex_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> Option<&mut <M as PropertyMap>::Storage> {
-        return self.vertex_properties.get_property_map::<M>(property_type);
+    fn get_vertex_property<M: PropertyMap<V> + 'static, V>(&mut self, property_type: PropertyType) -> Option<&mut M> {
+        return self.vertex_properties.get_property_map::<M, V>(property_type);
     }
 
-    fn add_vertex_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> bool {
-        return self.vertex_properties.add_property_map::<M>(property_type);
+    fn add_vertex_property<M: PropertyMap<V> + 'static, V>(&mut self, map : M) -> bool {
+        return self.vertex_properties.add_property_map::<M, V>(map);
     }
 }
 

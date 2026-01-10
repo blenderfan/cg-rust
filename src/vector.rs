@@ -20,6 +20,8 @@ pub trait Vector<T> : Sized
     + Sub<Self, Output = Self>
     + AddAssign
     + SubAssign 
+    + Mul<Self, Output = Self>
+    + Mul<T, Output = Self>
     + Copy
     + Default
     + Index<usize>

@@ -9,19 +9,18 @@ pub enum PropertyType {
     COLOR = 1,
 }
 
-pub trait PropertyMap: Sized + Any {
-    type Storage: PropertyBase<Self>;
 
+pub trait PropertyMap<T>  {
+
+    fn new() -> Self;
+    fn with_capacity(capacity : usize) -> Self;
+
+    fn push(&mut self, value : T);
+    fn set(&mut self, idx : usize, value : T);
+
+    fn property_type() -> PropertyType;
 }
 
-pub trait PropertyBase<T>: Any {
-
-    fn new() -> Self where Self: Sized;
-
-    fn insert(&mut self, value: T);
-
-    fn property_type(&mut self) -> PropertyType;
-}
 
 pub(in crate) struct PropertyStore {
 
@@ -34,22 +33,21 @@ impl PropertyStore {
         Self { property_maps: HashMap::new(), }
     }
 
-    pub fn add_property_map<M: PropertyMap>(&mut self, property_type: PropertyType) -> bool {
+    pub fn add_property_map<M: PropertyMap<T> + 'static, T>(&mut self, map : M) -> bool {
 
-        if self.property_maps.contains_key(&property_type) {
+        if self.property_maps.contains_key(&M::property_type()) {
             return false;
         }
 
-        let new_map = <M as PropertyMap>::Storage::new();
-        let p = self.property_maps.insert(property_type, Box::new(new_map));
+        let p = self.property_maps.insert(M::property_type(), Box::new(map));
         return Option::is_some(&p);
     }
 
-    pub fn get_property_map<M: PropertyMap>(&mut self, property_type: PropertyType) -> Option<&mut <M as PropertyMap>::Storage> {
+    pub fn get_property_map<M: PropertyMap<T> + 'static, T>(&mut self, property_type : PropertyType) -> Option<&mut M> {
 
         match self.property_maps.get_mut(&property_type) {
             Some(map) => {
-                return map.downcast_mut::<<M as PropertyMap>::Storage>();
+                return map.downcast_mut::<M>();
             }
             None => None,
         }
@@ -57,11 +55,11 @@ impl PropertyStore {
 }
 
 pub trait VertexProperties {
-    fn get_vertex_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> Option<&mut <M as PropertyMap>::Storage>;
-    fn add_vertex_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> bool;
+    fn get_vertex_property<M: PropertyMap<T> + 'static, T>(&mut self, property_type : PropertyType) -> Option<&mut M>;
+    fn add_vertex_property<M: PropertyMap<T> + 'static, T>(&mut self, map : M) -> bool;
 }
 
 pub trait FaceProperties {
-    fn get_face_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> Option<&mut <M as PropertyMap>::Storage>;
-    fn add_face_property<M: PropertyMap>(&mut self, property_type: PropertyType) -> bool;
+    fn get_face_property<M: PropertyMap<T> + 'static, T>(&mut self, property_type: PropertyType) -> Option<&mut M>;
+    fn add_face_property<M: PropertyMap<T> + 'static, T>(&mut self, map : M) -> bool;
 }
