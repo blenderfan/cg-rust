@@ -15,6 +15,18 @@ pub mod mesh_normals {
     use crate::vector::Vec3;
     use crate::mesh::Mesh;
 
+    /// Calculates the normal of a face, with an arbitrary amount of points, using Newell's Method
+    /// 
+    /// # Examples
+    /// ```
+    /// let vertices = Vec::from([Vec3f::new(0.0f, 0.0f, 0.0f),
+    ///                           Vec3f::new(1.0f, 0.0f, 0.0f),
+    ///                           Vec3f::new(0.0f, 1.0f, 0.0f)]);
+    /// 
+    /// let normal = calculate_face_normal(vertices); //Returns (0, 0, 1)
+    /// 
+    /// ```
+    /// 
     pub fn calculate_face_normal<T: Vec3<U> + FloatVector<U>, U : Num + PartialOrd<U> + Float>(vertices: Vec<T>) -> Option<T> {
 
         let mut sum = T::zero();
@@ -26,7 +38,7 @@ pub mod mesh_normals {
 
         for i in 0..size {
 
-            let mut next = vertices[(i + 1) % size];
+            let next = vertices[(i + 1) % size];
 
             let diff = current - next;
             let add = current + next;
@@ -43,6 +55,17 @@ pub mod mesh_normals {
 
     /// Creates normals for vertices based on incident faces, such that larger angles, formed by the two adjacent edges to the vertex of the face,
     /// have a higher weight than smaller ones
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// let mesh = ...;
+    /// 
+    /// let normals = create_angle_weighted_pseudo_vertex_normals(&mesh);
+    /// mesh.add_vertex_property(normals);
+    /// 
+    /// ```
+    /// 
     pub fn create_angle_weighted_pseudo_vertex_normals<MeshType : Mesh<T, U, IndexType>, T: Vec3<U> + FloatVector<U> + 'static, U : Num + PartialOrd<U> + Float + 'static, IndexType : PrimInt + Hash + Unsigned>(mesh: &MeshType) 
         -> NormalMap<T, U>
     {
@@ -132,8 +155,10 @@ pub mod mesh_normals {
     #[cfg(test)]
     mod unit_tests {
 
-        use crate::mesh::Mesh;
+        use crate::common_properties::NormalMap;
         use crate::mesh_normal_calculation::mesh_normals::create_angle_weighted_pseudo_vertex_normals;
+        use crate::property_map::PropertyMap;
+        use crate::property_map::PropertyType;
         use crate::property_map::VertexProperties;
         use crate::vector::Vec3f;
         use crate::vector::Vec3;
@@ -167,7 +192,13 @@ pub mod mesh_normals {
 
             let normals = create_angle_weighted_pseudo_vertex_normals(&usquare);
 
+            assert_eq!(normals.len(), 4);
+
             usquare.add_vertex_property(normals);
+
+            let map = usquare.get_vertex_property::<NormalMap<Vec3f, f32>, Vec3f>(PropertyType::NORMAL);
+            
+            assert!(map.is_some());
         }
 
     }

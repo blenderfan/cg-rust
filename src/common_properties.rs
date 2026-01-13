@@ -57,6 +57,14 @@ impl<T : Vec3<U> + FloatVector<U> + 'static, U : Num + Float + PartialOrd<U> + '
         self.data[idx] = value;
     }
 
+    fn get(&self, idx : usize) -> T {
+        return self.data[idx];
+    }
+
+    fn len(&self) -> usize {
+        return self.data.len();
+    }
+
     fn property_type() -> PropertyType {
         return PropertyType::NORMAL;
     }

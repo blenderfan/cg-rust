@@ -18,6 +18,10 @@ pub trait PropertyMap<T>  {
     fn push(&mut self, value : T);
     fn set(&mut self, idx : usize, value : T);
 
+    fn get(&self, idx : usize) -> T;
+
+    fn len(&self) -> usize;
+
     fn property_type() -> PropertyType;
 }
 
