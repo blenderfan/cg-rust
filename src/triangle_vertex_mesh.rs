@@ -118,6 +118,98 @@ impl<T: Vec3<U> + FloatVector<U>, U: Num + PartialOrd<U> + Float, IndexType : Pr
         } 
     }
 
+    fn make_face_vertex_incidence_map(&self, map: &mut HashMap<IndexType, HashSet<IndexType>>) {
+
+        let size = self.indices.len();
+        let triangle_count = size / 3;
+
+        for i in 0..triangle_count {
+
+            let idx_a = i * 3 + 0;
+            let idx_b = i * 3 + 1;
+            let idx_c = i * 3 + 2;
+
+            let v_idx_a = self.indices[idx_a];
+            let v_idx_b = self.indices[idx_b];
+            let v_idx_c = self.indices[idx_c];
+
+            let idx = NumCast::from(i).unwrap();
+
+            if !map.contains_key(&idx) {
+                map.insert(idx, HashSet::<IndexType>::new());
+            }
+
+            unsafe {
+                let triangle_incident = map.get_mut(&idx).unwrap_unchecked();
+                triangle_incident.insert(v_idx_a);
+                triangle_incident.insert(v_idx_b);
+                triangle_incident.insert(v_idx_c);
+            }
+        }
+    }
+
+    fn make_face_face_incidence_map(&self, map: &mut HashMap<IndexType, HashSet<IndexType>>) {
+
+        let size = self.indices.len();
+ 
+        let mut vertex_face_map = HashMap::<IndexType, HashSet<IndexType>>::new();
+        self.make_vertex_face_incidence_map(&mut vertex_face_map);
+
+        for i in 0..size {
+
+            let v_idx = self.indices[i];
+
+            let incident_faces_option = vertex_face_map.get(&v_idx);
+            if incident_faces_option.is_some() {
+
+                let incident_faces = incident_faces_option.unwrap();
+                for f_idx_a in incident_faces {
+
+                    let f_a = f_idx_a.to_usize().unwrap();
+                    let va_idx_a = self.indices[f_a * 3 + 0 ];
+                    let va_idx_b = self.indices[f_a * 3 + 1];
+                    let va_idx_c = self.indices[f_a * 3 + 2];
+
+                    for f_idx_b in incident_faces {
+
+                        let f_b = f_idx_b.to_usize().unwrap();
+                        if f_a != f_b {
+ 
+                            let mut eq = 0;
+
+                            let vb_idx_a = self.indices[f_b * 3 + 0];
+                            let vb_idx_b = self.indices[f_b * 3 + 1];
+                            let vb_idx_c = self.indices[f_b * 3 + 2];
+
+                            if va_idx_a == vb_idx_a || va_idx_a == vb_idx_b || va_idx_a == vb_idx_c { eq += 1; }
+                            if va_idx_b == vb_idx_a || va_idx_b == vb_idx_b || va_idx_b == vb_idx_c { eq += 1; }
+                            if va_idx_c == vb_idx_a || va_idx_c == vb_idx_b || va_idx_c == vb_idx_c { eq += 1; }
+                        
+                            if eq >= 2 {
+        
+                                if !map.contains_key(&f_idx_a) {
+                                    map.insert(*f_idx_a, HashSet::<IndexType>::new());
+                                }
+
+                                if !map.contains_key(&f_idx_b) {
+                                    map.insert(*f_idx_b, HashSet::<IndexType>::new());
+                                }
+
+                                unsafe {
+                                    let a_incident = map.get_mut(&f_idx_a).unwrap_unchecked();
+                                    a_incident.insert(*f_idx_b);
+
+                                    let b_incident = map.get_mut(&f_idx_b).unwrap_unchecked();
+                                    b_incident.insert(*f_idx_a);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     fn make_vertex_face_incidence_map(&self, map: &mut HashMap<IndexType, HashSet<IndexType>>) {
 
         let size = self.indices.len();
@@ -206,9 +298,9 @@ impl<T: Vec3<U> + FloatVector<U>, U : Num + PartialOrd<U> + Float, IndexType : P
                 }
             MeshComponent::FACE => 
                 match incident_type {
-                    MeshComponent::VERTEX => todo!(),
+                    MeshComponent::VERTEX => self.make_face_vertex_incidence_map(&mut map),
                     MeshComponent::EDGE => todo!(),
-                    MeshComponent::FACE => todo!()
+                    MeshComponent::FACE => self.make_face_face_incidence_map(&mut map)
                 }
         }
 
@@ -275,8 +367,8 @@ mod unit_tests {
                 5, 6, 7,
 
                 //Left
-                4, 0, 3,
-                4, 3, 6,
+                4, 0, 2,
+                4, 2, 6,
 
                 //Right
                 1, 5, 7,
@@ -327,6 +419,33 @@ mod unit_tests {
         assert_eq!(uv0_incidence.len(), 4);
     }
 
+    #[test]
+    fn test_face_vertex_map() {
+        let ucube = create_unit_cube();
 
+        let face_triangle_map = ucube.make_incidence_map(MeshComponent::FACE, MeshComponent::VERTEX);
+        assert_eq!(face_triangle_map.len(), 12);
+
+        let f0_incidence = face_triangle_map.get(&0);
+        assert!(f0_incidence.is_some());
+
+        let uf0_incidence = f0_incidence.unwrap();
+        assert_eq!(uf0_incidence.len(), 3);
+    }
+
+    #[test]
+    fn test_face_face_map() {
+
+        let ucube = create_unit_cube();
+
+        let face_face_map = ucube.make_incidence_map(MeshComponent::FACE, MeshComponent::FACE);
+        assert_eq!(face_face_map.len(), 12);
+
+        let f0_incidence = face_face_map.get(&0);
+        assert!(f0_incidence.is_some());
+
+        let uf0_incidence = f0_incidence.unwrap();
+        assert_eq!(uf0_incidence.len(), 3);
+    }
 
 }
