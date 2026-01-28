@@ -1,4 +1,6 @@
 
+![CG Rust Banner](https://github.com/blenderfan/cg-rust/blob/master/cg_rust_banner.png)
+
 ## Table of contents
 - [Introduction](#introduction)
 - [Overview](#overview)
