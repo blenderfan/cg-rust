@@ -1,6 +1,13 @@
 
 ![CG Rust Banner](https://github.com/blenderfan/cg-rust/blob/master/cg_rust_banner.png)
 
+<a href="https://github.com/blenderfan/cg-rust/stargazers"><img src="https://img.shields.io/github/stars/blenderfan/cg-rust" alt="Stars Badge"/></a>
+<a href="https://github.com/blenderfan/cg-rust/network/members"><img src="https://img.shields.io/github/forks/blenderfan/cg-rust" alt="Forks Badge"/></a>
+<a href="https://github.com/blenderfan/cg-rust/pulls"><img src="https://img.shields.io/github/issues-pr/blenderfan/cg-rust" alt="Pull Requests Badge"/></a>
+<a href="https://github.com/blenderfan/cg-rust/issues"><img src="https://img.shields.io/github/issues/blenderfan/cg-rust" alt="Issues Badge"/></a>
+<a href="https://github.com/blenderfan/cg-rust/graphs/contributors"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors/blenderfan/cg-rust?color=2b9348"></a>
+<a href="https://github.com/blenderfan/cg-rust/blob/master/LICENSE"><img src="https://img.shields.io/github/license/blenderfan/cg-rust?color=2b9348" alt="License Badge"/></a>
+
 ## Table of contents
 - [Introduction](#introduction)
 - [Overview](#overview)
